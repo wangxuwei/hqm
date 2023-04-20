@@ -1,23 +1,23 @@
 import "./App.pcss";
+import Home from './Home';
+import Tools from './Tools';
 
 
-// let pathToView: { [name: string]: BaseViewClass } = {
-// 	"home": HomeView,
-// 	"stats": StatsView,
-// 	"tools": ToolsView
-// };
+let pathToView: { [name: string]: Object } = {
+	"home": Home,
+	// "stats": Stats,
+	"tools": Tools
+};
 
 
 function App() {
 
   return (
-    <div className="MainView">
+    <div className="App">
       <header>
         <h3>统计工具</h3>
       </header>
-      
       <nav></nav>
-
       <main>
       </main>
       <footer>
