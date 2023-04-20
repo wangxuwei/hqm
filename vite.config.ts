@@ -15,7 +15,9 @@ export default defineConfig(async () => ({
     postcss: {
       plugins: [
         postcssImport,
-        postcssMixins,
+        postcssMixins({
+          mixinsDir: "./src/pcss/mixins"
+        }),
         postcssNested
       ]
     }
