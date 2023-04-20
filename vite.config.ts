@@ -1,5 +1,9 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import postcssImport from "postcss-import";
+import postcssMixins from 'postcss-mixins';
+import postcssNested from 'postcss-nested';
+import { defineConfig } from "vite";
+
 
 const mobile =
   process.env.TAURI_PLATFORM === "android" ||
@@ -7,6 +11,15 @@ const mobile =
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
+  css: {
+    postcss: {
+      plugins: [
+        postcssImport,
+        postcssMixins,
+        postcssNested
+      ]
+    }
+  },
   plugins: [react()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
