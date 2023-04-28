@@ -1,0 +1,30 @@
+.section{
+	flex: 1;
+	display: grid;
+	flex-direction: column;
+	grid-auto-flow: row;
+	grid-template-rows: auto 1fr;
+	.section-filter{
+		display: grid;
+		grid-template-columns: 264px 264px 1fr;
+		align-items: center;
+		.filter-item{
+			display: flex;
+		}
+	}
+	.section-results{
+		flex:1;
+		display: flex;
+		margin-top: 16px;
+		overflow: hidden;
+		.table{
+			.tbody{
+				.tr{
+					&:nth-child(2n+1){
+						background: var(--bkg-light);
+					}
+				}
+			}
+		}
+	}
+}

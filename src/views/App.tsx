@@ -3,11 +3,12 @@ import "./App.pcss";
 import Home from './Home';
 import Nav from './Nav';
 import Tools from './Tools';
+import Stats from './stats/Stats';
 
 
 const pathToView: { [name: string]: JSX.Element } = {
 	"home": <Home />,
-	// "stats": Stats,
+	"stats": <Stats />,
 	"tools": <Tools />
 };
 
