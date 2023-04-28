@@ -1,11 +1,21 @@
+import "./Nav.pcss";
 
 
-function Nav(){
+const menus = [
+  {tab: "home", label:"首页"},
+  {tab: "stats", label:"互助会"},
+  {tab: "tools", label:"工具"}
+];
+
+function Nav(props: {curtab:string, setTab:Function}){
+
   return (
     <div className="Nav">
-      <a className='sel' href="#home">首页</a>
-      <a href="#stats">会钱统计</a>
-      <a href="#tools">工具</a>
+      {
+        menus.map((m) => {
+          return <a key={m.tab} data-tab={m.tab} className={props.curtab == m.tab ? "sel":""} onClick={() => {props.setTab(m.tab)}}>{m.label}</a>
+        })
+      }
     </div>
   );
 }

@@ -1,10 +1,10 @@
-
+import "./Tools.pcss";
 
 
 
 function Tools(){
   return (
-    <div className="ToolsView">
+    <div className="Tools">
       <div className="card">
         <header>导入</header>
         <section className="content">
