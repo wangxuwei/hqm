@@ -1,0 +1,40 @@
+.table{
+	flex:1;
+	display: grid;
+	border-radius: 4px;
+	border: 1px solid var(--bdr);
+	grid-template-rows: 32px 1fr fit-content(32px);
+	position: relative;
+	.thead {
+		border-bottom: 1px solid var(--bdr);
+	}
+
+	.tbody {
+		overflow-y: overlay;
+		overflow-x:hidden;
+		.tr:last-child{
+			border: none;
+		}
+	}
+
+	.tfoot {
+		height: 32px;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		padding-right: 24px;
+		border-top: 1px solid var(--bdr);
+	}
+	.tr{
+		display: grid;
+		grid-auto-flow: column;
+		align-items: center;
+		padding: 6px 0;
+		font-size: 14px;
+		font-weight: 400;
+		border-bottom: 1px solid var(--bdr);
+		color: var(--txt);
+		margin: 0;
+		position: relative;
+	}
+}
