@@ -4,6 +4,7 @@ import { Unit } from '../../ts/entity-types';
 import { getPaymentInPeriod } from '../../ts/service-unit';
 import { toDateInfo } from '../../ts/unit-cal';
 import { formatDate, formatToLunar, mom, now } from '../../ts/utils-date';
+import DatePicker from '../comp/DatePicker';
 import "./StatsPayment.pcss";
 
 
@@ -18,6 +19,10 @@ export default function StatsPayment(){
     payment:number,
     number: number}[]);
   const [total, setTotal] = useState(0);
+
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
 
   function refresh(){
     getPaymentInPeriod(startDate, endDate).then((result) => {
@@ -34,13 +39,15 @@ export default function StatsPayment(){
         <div className="filter-item">
           <span>开始时间：</span>
           <div className="date-input">
-            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))}/>
+            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))} onClick={() => setShowStartPicker(!showStartPicker)}/>
+            {showStartPicker ? <DatePicker/> : ""}
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
-            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}/>
+            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}  onClick={() => setShowEndPicker(!showEndPicker)}/>
+            {showEndPicker ? <DatePicker/> : ""}
           </div>
         </div>
         <div className="filter-item">
