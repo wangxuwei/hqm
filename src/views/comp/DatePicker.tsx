@@ -4,13 +4,27 @@ import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./DatePicker.pcss";
 // import icoLeft from '/ico-double-arrow-left.svg';
 // import icoRight from '/ico-double-arrow-right.svg';
+import { useEffect, useRef } from 'react';
 
-function DatePicker(){
+function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
 
   const nw = now();
   const calendar = getCalendars(nw.month(), nw.year());
+
+	const wrapperRef = useRef<HTMLDivElement | null>(null);
+	useEffect(() => {
+		const handle = (event:Event) => {
+			if(!wrapperRef.current?.contains(event.target as Node)){
+				props.onCancel?.();
+			}
+		};
+		document.addEventListener('click',handle)
+		return () => document.removeEventListener('click',handle)
+	});		
+
+		
   return (
-    <div className="DatePicker">
+    <div className="DatePicker" ref={wrapperRef}>
       <div className="DatePicker-content">
         <div className="DatePicker-calendar">
           <div className="calendar-header">
@@ -45,7 +59,7 @@ function DatePicker(){
                   {
                     w.map((d:any, j:number) => {
                       return (<td >
-                        <div className={["date", d.currentMonth ? "": "disable"].join(" ")}>
+                        <div className={["date", d.currentMonth ? "": "disable"].join(" ")} onClick={() => props.onSelect?.(d.date)}>
                           <span className="solar">{d.dataValue}</span>
                           <span className="lunar">{d.lunar}</span>
                         </div>
@@ -171,5 +185,10 @@ function getLunarDate(date: Moment) {
 		return formatLunarDate(lunarDate, "D");
 	}
 }
+
+// DatePicker.propTypes = {
+// 	onSelect: PropTypes.func,
+// 	onCancel: PropTypes.func
+// }
 
 export default DatePicker;

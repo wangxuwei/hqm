@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 import { Unit } from '../../ts/entity-types';
 import { getPaymentInPeriod } from '../../ts/service-unit';
 import { toDateInfo } from '../../ts/unit-cal';
@@ -20,9 +20,7 @@ export default function StatsPayment(){
     number: number}[]);
   const [total, setTotal] = useState(0);
 
-  const [showStartPicker, setShowStartPicker] = useState(false);
-  const [showEndPicker, setShowEndPicker] = useState(false);
-
+  const [pickers, setShowPicker] = useState([false,false]);
 
   function refresh(){
     getPaymentInPeriod(startDate, endDate).then((result) => {
@@ -31,23 +29,40 @@ export default function StatsPayment(){
     });
   }
 
-  refresh();
+  function onDateSelect(value:Moment, name:string){
+    if(name == 'start'){
+      setStartDate(value);
+    }else{
+      setEndDate(value);
+    }
+    setShowPicker([false, false]);
+  }
 
+  function onDateCancel(name:string){
+    setShowPicker([false, false]);
+  }
+
+  function showPicker(e:MouseEvent, arr:boolean[]){
+    e.stopPropagation();
+    setShowPicker(arr);
+  }
+
+  refresh();
   return (
     <div className="StatsPayment section">
       <div className="section-filter">
         <div className="filter-item">
           <span>开始时间：</span>
           <div className="date-input">
-            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))} onClick={() => setShowStartPicker(!showStartPicker)}/>
-            {showStartPicker ? <DatePicker/> : ""}
+            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))} onClick={(e:MouseEvent) => {showPicker(e, [true,false])}} />
+            {pickers[0] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'start')} onCancel={onDateCancel} /> }
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
-            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}  onClick={() => setShowEndPicker(!showEndPicker)}/>
-            {showEndPicker ? <DatePicker/> : ""}
+            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}  onClick={(e) => showPicker(e,[false, true])} />
+            {pickers[1] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'end')} onCancel={onDateCancel} /> }
           </div>
         </div>
         <div className="filter-item">
