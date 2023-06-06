@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { ajaxGet } from './ajax';
 import { Unit } from './entity-types';
+import { webGet } from './web-request';
 
 const DATA_PATH = "/data";
 export async function getUnitsData() {
-	const jsonData = await ajaxGet(`${DATA_PATH}/data.json`);
+	const jsonData = await webGet(`${DATA_PATH}/data.json`);
 	return parseUnits(jsonData);
 }
 

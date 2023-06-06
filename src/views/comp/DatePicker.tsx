@@ -1,10 +1,9 @@
 import moment, { Moment } from 'moment';
+import { useEffect, useRef } from 'react';
 import { formatDate, now } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./DatePicker.pcss";
-// import icoLeft from '/ico-double-arrow-left.svg';
-// import icoRight from '/ico-double-arrow-right.svg';
-import { useEffect, useRef } from 'react';
+import Ico from './Ico';
 
 function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
 
@@ -29,7 +28,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
         <div className="DatePicker-calendar">
           <div className="calendar-header">
             <span className="action actionPrev">
-              {/* <i><img src={icoLeft} /></i> */}
+              <Ico name="ico-double-arrow-left" />
             </span>
             <span>
               <span>{calendar.monthLabel}</span>
@@ -38,7 +37,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
               </select>
             </span>
             <span className="action actionNext">
-              {/* <i><img src={icoRight} /></i> */}
+              <Ico name="ico-double-arrow-right" />
             </span>
           </div>
           <table className="DatePicker-calendar-table">
