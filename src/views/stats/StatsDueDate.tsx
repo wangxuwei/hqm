@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Unit } from '../../ts/entity-types';
 import { getDueDateUnitsInPeroid } from '../../ts/service-unit';
 import { formatDate, mom, now } from '../../ts/utils-date';
+import DatePicker from '../comp/DatePicker';
 import "./StatsDueDate.pcss";
 
 export default function StatsDueDate(){
@@ -10,12 +11,31 @@ export default function StatsDueDate(){
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
   const [items, setItems] = useState([] as ({unit:Unit ,lastBudgetDate:Moment})[]);
+  const [pickers, setShowPicker] = useState([false,false]);
 
 
   function refresh(){
     getDueDateUnitsInPeroid(startDate, endDate).then((result) => {
       setItems(result.unitSnapshots);
     });
+  }
+
+  function onDateSelect(value:Moment, name:string){
+    if(name == 'start'){
+      setStartDate(value);
+    }else{
+      setEndDate(value);
+    }
+    setShowPicker([false, false]);
+  }
+
+  function onDateCancel(name:string){
+    setShowPicker([false, false]);
+  }
+
+  function showPicker(e:MouseEvent, arr:boolean[]){
+    e.stopPropagation();
+    setShowPicker(arr);
   }
   
   refresh();
@@ -27,12 +47,14 @@ export default function StatsDueDate(){
           <span>开始时间：</span>
           <div className="date-input">
             <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))}/>
+            {pickers[0] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'start')} onCancel={onDateCancel} /> }
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
             <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}/>
+            {pickers[1] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'end')} onCancel={onDateCancel} /> }
           </div>
         </div>
         <div className="filter-item">
