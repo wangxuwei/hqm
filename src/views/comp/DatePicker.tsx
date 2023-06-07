@@ -1,14 +1,14 @@
 import moment, { Moment } from 'moment';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { formatDate, now } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./DatePicker.pcss";
 import Ico from './Ico';
 
-function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
+function DatePicker(props:{onSelect?:Function, onCancel?:Function, date?:Moment}, state:{}){
 
-  const nw = now();
-  const calendar = getCalendars(nw.month(), nw.year());
+  const nw = props.date ?? now();
+  const [calendar, setCalendar] = useState(getCalendars(nw.month(), nw.year()));
 
 	const wrapperRef = useRef<HTMLDivElement | null>(null);
 	useEffect(() => {
@@ -19,16 +19,22 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
 		};
 		document.addEventListener('click',handle)
 		return () => document.removeEventListener('click',handle)
-	});		
+	});
 
+	function nextMonth(next:boolean){
+		const dir = next ? 1 : -1;
+		let n = moment([calendar.year, calendar.month, 1])
+		n = n.add(dir, 'month');
+		setCalendar(getCalendars(n.month(), n.year()));
+	}
 		
   return (
     <div className="DatePicker" ref={wrapperRef}>
       <div className="DatePicker-content">
         <div className="DatePicker-calendar">
           <div className="calendar-header">
-            <span className="action actionPrev">
-              <Ico name="ico-double-arrow-left" />
+            <span className="action actionPrev" onClick={() => {nextMonth(false)}}>
+              <Ico name="ico-double-arrow-left"/>
             </span>
             <span>
               <span>{calendar.monthLabel}</span>
@@ -36,7 +42,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
               <select name="yearSelect" className="hide">
               </select>
             </span>
-            <span className="action actionNext">
+            <span className="action actionNext" onClick={() => {nextMonth(true)}}>
               <Ico name="ico-double-arrow-right" />
             </span>
           </div>
@@ -57,8 +63,8 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
                 return (<tr key={i}>
                   {
                     w.map((d:any, j:number) => {
-                      return (<td >
-                        <div className={["date", d.currentMonth ? "": "disable"].join(" ")} onClick={() => props.onSelect?.(d.date)}>
+                      return (<td key={j}>
+                        <div className={["date", !d.currentMonth ?  "disable" : "", d.dataValue == nw.date() ? 'selected' : ""].join(" ")} onClick={() => props.onSelect?.(d.date)}>
                           <span className="solar">{d.dataValue}</span>
                           <span className="lunar">{d.lunar}</span>
                         </div>
@@ -70,7 +76,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function}, state:{}){
             </tbody>
           </table>
           <div className="calendar-footer">
-            <div className="button today">Today</div>
+            <div className="button today"  onClick={() => props.onSelect?.(now())}>Today</div>
           </div>
         </div>
       </div>
@@ -122,7 +128,6 @@ function getCalendars(month: number, year: number) {
 	}
 
 	//add next month dates
-	let newEndDate = endDateOfMonth;
 	for (let i = endDateOfMonth.day() + 1; i <= 6; i++) {
 		const date = endDateOfMonth.clone().add(i - endDateOfMonth.day(), 'day');
 		const dataValue = date.date();
@@ -134,26 +139,7 @@ function getCalendars(month: number, year: number) {
 			currentMonth: false,
 			lunar: getLunarDate(date)
 		}
-		newEndDate = date;
 	}
-
-	// hide for the 6rd row
-	// if (weeks.length < 6) {
-	// 	const week = [];
-	// 	for (let i = 0; i < 7; i++) {
-	// 		const date = newEndDate.clone().add(i + 1, "day");
-	// 		const dataValue = date.date();
-	// 		const dateFormatStr = formatDate(date);
-	// 		week.push({
-	// 			date,
-	// 			dataValue: dataValue,
-	// 			dateStr: dateFormatStr,
-	// 			currentMonth: false,
-	// 			lunar: getLunarDate(date)
-	// 		});
-	// 	}
-	// 	weeks.push(week);
-	// }
 
 	calendar.year = firstDateOfMonth.year();
 	calendar.month = firstDateOfMonth.month();
@@ -161,19 +147,6 @@ function getCalendars(month: number, year: number) {
 	calendar.weeks = weeks;
 	return calendar;
 }
-
-// function setValue(this: DatePicker, date: Moment) {
-// 	trigger(this.targetEl!, "SET_DATE", { detail: { value: date }, cancelable: false });
-// }
-
-// function selectDate(this: DatePicker, date: Moment) {
-// 	const dateString = formatDate(date);
-// 	const selectedEl = first(this.el, "td .date.selected")!
-// 	if (selectedEl) {
-// 		selectedEl.classList.remove("selected");
-// 	}
-// 	first(this.el, "td[data-date='" + dateString + "'] .date")!.classList.add("selected");
-// }
 
 // for lunar
 function getLunarDate(date: Moment) {
@@ -185,9 +158,5 @@ function getLunarDate(date: Moment) {
 	}
 }
 
-// DatePicker.propTypes = {
-// 	onSelect: PropTypes.func,
-// 	onCancel: PropTypes.func
-// }
 
 export default DatePicker;
