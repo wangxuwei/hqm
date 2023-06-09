@@ -4,7 +4,7 @@ import "./main.pcss";
 import { webGet } from './ts/web-request';
 import App from "./views/App";
 
-const svgSymbolsPromise = webGet("/src/assets/sprite.svg", { contentType: "application/xml" });
+const svgSymbolsPromise = webGet("/sprite.svg", { contentType: "application/xml" });
 
 document.addEventListener("DOMContentLoaded", function (event) {
 	// we make sure the the ajax for the svg/sprites.svg returns
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function (event) {
         <App />
       </React.StrictMode>
     );
-
+  
 	});
+  
 });
