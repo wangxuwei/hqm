@@ -1,7 +1,7 @@
 {
   "name": "hqm",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
     "@tauri-apps/api": "^1.2.0",
     "chinese-lunar": "^0.1.4",
     "utils-min":"^0.2.1",
+    "dom-native": "^0.11.2",
     "moment": "^2.22.2",
     "fs-extra": "^11.1.1",
     "postcss-import": "^12.0.0",

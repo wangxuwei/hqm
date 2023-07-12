@@ -1,15 +1,52 @@
-// Prevents additional console window on Windows in release, DO NOT REMOVE!!
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+// #![allow(unused)]
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+#![cfg_attr(
+    all(not(debug_assertions), target_os = "windows"),
+    windows_subsystem = "windows"
+)]
 
-fn main() {
+// -- Re-Exports
+pub use error::{Error, Result};
+
+// -- Imports
+use model::ModelStore;
+use std::sync::Arc;
+
+// -- Sub-Modules
+mod ctx;
+mod error;
+mod event;
+mod ipc;
+mod model;
+mod prelude;
+mod utils;
+
+#[tokio::main]
+async fn main() -> Result<()> {
+    let model_manager = ModelStore::new().await?;
+    let model_manager = Arc::new(model_manager);
+
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet])
+        .manage(model_manager)
+        .invoke_handler(tauri::generate_handler![
+            // Unit
+            ipc::get_unit,
+            ipc::create_unit,
+            ipc::update_unit,
+            ipc::delete_unit,
+            ipc::get_payment_in_period,
+            ipc::get_valid_left_income,
+            ipc::get_due_date_units_in_peroid,
+            ipc::get_interest_in_period,
+            // UnitBudget
+            ipc::get_unit_budget,
+            ipc::create_unit_budget,
+            ipc::update_unit_budget,
+            ipc::delete_unit_budget,
+            ipc::list_unit_budgets
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+
+    Ok(())
 }
