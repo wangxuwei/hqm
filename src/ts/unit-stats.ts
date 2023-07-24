@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { Unit } from "./entity-types";
+import { Unit } from '../bindings';
 import { compareUnitTime, getSelfBugdets, getUnitBudgets, getUnitTimes } from "./unit-cal";
 import { now } from "./utils-date";
 

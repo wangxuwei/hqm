@@ -1,5 +1,5 @@
 import { Moment } from "moment";
-import { Unit } from "./entity-types";
+import { Unit } from '../bindings';
 import { mom } from "./utils-date";
 import { leapMonths, lunar2solar, solar2lunar } from "./utils-lunar";
 

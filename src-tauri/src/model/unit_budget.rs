@@ -19,7 +19,7 @@ use ts_rs::TS;
 // region:    --- UnitBudget
 
 #[skip_serializing_none]
-#[derive(Serialize, TS, Debug)]
+#[derive(Serialize, TS, Debug, Clone)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudget {
     pub id: String,

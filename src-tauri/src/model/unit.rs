@@ -2,7 +2,7 @@
 //!
 use super::bmc_base::{bmc_create, bmc_delete, bmc_get, bmc_list, bmc_update};
 use super::store::{Creatable, Filterable, Patchable};
-use super::ModelMutateResultData;
+use super::{ModelMutateResultData, UnitBudget, UnitBudgetForCreate};
 use crate::ctx::Ctx;
 use crate::utils::XTake;
 use crate::{Error, Result};
@@ -17,7 +17,7 @@ use ts_rs::TS;
 
 // region:    --- Unit
 
-#[derive(Serialize, TS, Debug)]
+#[derive(Serialize, TS, Debug, Clone)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct Unit {
     // persistent
@@ -34,9 +34,9 @@ pub struct Unit {
     // 频率 平均几月一次，有可能半月
     pub cycle: i64,
     // 加标月哪一天开始
-    pub plus_day: i64,
+    pub plus_day: Option<i64>,
     // 加标频率 平均几月一次，有可能半月
-    pub plus_cycle: i64,
+    pub plus_cycle: Option<i64>,
     // 本金
     pub budget: i64,
     // 会员数
@@ -51,6 +51,8 @@ pub struct Unit {
     pub amount: Option<i64>,
     // 备注
     pub description: Option<String>,
+
+    pub unit_budgets: Option<Vec<Option<UnitBudget>>>,
 }
 
 impl TryFrom<Object> for Unit {
@@ -63,14 +65,15 @@ impl TryFrom<Object> for Unit {
             last_bidded_date: val.x_take_val("last_bidded_date")?,
             day: val.x_take_val("day")?,
             cycle: val.x_take_val("cycle")?,
-            plus_day: val.x_take_val("plus_day")?,
-            plus_cycle: val.x_take_val("plus_cycle")?,
+            plus_day: val.x_take("plus_day")?,
+            plus_cycle: val.x_take("plus_cycle")?,
             budget: val.x_take_val("budget")?,
             count: val.x_take_val("count")?,
             bidded_count: val.x_take_val("bidded_count")?,
             unit_count: val.x_take_val("unit_count")?,
             amount: val.x_take("amount")?,
             description: val.x_take("description")?,
+            unit_budgets: None,
         };
 
         Ok(unit)
@@ -114,6 +117,9 @@ pub struct UnitForCreate {
     pub amount: Option<i64>,
     // 备注
     pub description: Option<String>,
+
+    // transient
+    pub unit_budgets: Option<Vec<UnitBudgetForCreate>>,
 }
 
 impl From<UnitForCreate> for Value {

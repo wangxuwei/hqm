@@ -19,6 +19,7 @@ mod event;
 mod ipc;
 mod model;
 mod prelude;
+mod unit;
 mod utils;
 
 #[tokio::main]

@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { Unit } from './entity-types';
+import { Unit } from '../bindings';
 import { webGet } from './web-request';
 
 const DATA_PATH = "/data";

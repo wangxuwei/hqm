@@ -456,6 +456,23 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chinese-lunisolar-calendar"
+version = "0.1.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fb48e35042035759cc5a708eb513a6c21000d076d09704f880175674870ef63a"
+dependencies = [
+ "chinese-variant",
+ "chrono",
+ "once_cell",
+]
+
+[[package]]
+name = "chinese-variant"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aeea139b89efab957972956e5d3e4efb66a6c261f726abf6911040cc8ef700f7"
+
+[[package]]
 name = "chrono"
 version = "0.4.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1500,6 +1517,8 @@ name = "hqm"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chinese-lunisolar-calendar",
+ "chrono",
  "modql",
  "parking_lot",
  "serde",
