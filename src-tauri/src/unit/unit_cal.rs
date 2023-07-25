@@ -23,8 +23,8 @@ struct DateInfo {
     leap: Option<bool>,
 }
 
-impl DateInfo {
-    fn from_lunar(l: Lunar) -> Self {
+impl From<&Lunar> for DateInfo {
+    fn from(l: &Lunar) -> Self {
         Self {
             year: l.year,
             month: l.month,
@@ -32,18 +32,27 @@ impl DateInfo {
             leap: Some(l.leap),
         }
     }
+}
 
-    fn to_lunar(&self) -> Lunar {
+impl From<&DateInfo> for Lunar {
+    fn from(date_info: &DateInfo) -> Self {
         Lunar {
-            year: self.year,
-            month: self.month,
-            day: self.day,
-            leap: self.leap.unwrap(),
+            year: date_info.year,
+            month: date_info.month,
+            day: date_info.day,
+            leap: date_info.leap.unwrap(),
         }
     }
+}
 
-    fn to_naive_date(&self) -> NaiveDate {
-        NaiveDate::from_ymd_opt(self.year as i32, self.month as u32, self.day as u32).unwrap()
+impl From<&DateInfo> for NaiveDate {
+    fn from(date_info: &DateInfo) -> Self {
+        NaiveDate::from_ymd_opt(
+            date_info.year as i32,
+            date_info.month as u32,
+            date_info.day as u32,
+        )
+        .unwrap()
     }
 }
 
@@ -282,8 +291,8 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                 // 计算闰月是否要标, 只有一个月标一次才有可能，其他都不标
                 if unit.is_lunar && unit.cycle == 1 {
                     let months = leap_months(
-                        last_plus_date_info.to_lunar(),
-                        next_plus_date_info.to_lunar(),
+                        Lunar::from(&last_plus_date_info),
+                        Lunar::from(&next_plus_date_info),
                     );
                     if months.len() > 0 {
                         // 这样计算，就算有闰月也只有一次
@@ -322,7 +331,8 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
 
                 // 计算闰月是否要标, 只有一个月标一次才有可能，其他都不标
                 if unit.is_lunar && unit.cycle == 1 {
-                    let months = leap_months(last_date_info.to_lunar(), next_date_info.to_lunar());
+                    let months =
+                        leap_months(Lunar::from(&last_date_info), Lunar::from(&next_date_info));
                     if months.len() > 0 {
                         // 这样计算，就算有闰月也只有一次
                         let m = &months[0];
@@ -361,7 +371,7 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
 
 fn to_date_info(date: NaiveDate, is_lunar: bool) -> DateInfo {
     if is_lunar {
-        DateInfo::from_lunar(solar2lunar(date))
+        DateInfo::from(&solar2lunar(date))
     } else {
         DateInfo {
             year: date.year() as i16,
@@ -374,8 +384,8 @@ fn to_date_info(date: NaiveDate, is_lunar: bool) -> DateInfo {
 
 fn back_to_local_date(date_info: &DateInfo, is_lunar: bool) -> NaiveDate {
     if is_lunar {
-        lunar2solar(date_info.to_lunar())
+        lunar2solar(Lunar::from(date_info))
     } else {
-        date_info.to_naive_date()
+        NaiveDate::from(date_info)
     }
 }
