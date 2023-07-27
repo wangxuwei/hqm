@@ -112,7 +112,7 @@ pub fn get_left_income(
                 continue;
             }
         }
-        let self_budgets = get_self_budgets(&unit);
+        let self_budgets = get_self_budgets(unit);
         let left_count = unit.unit_count - (self_budgets.len() as i64);
         if left_count == 0 {
             continue;
@@ -140,13 +140,13 @@ pub fn get_left_income(
                 .format("%Y-%m-%dT%H:%M:%S.%3fZ")
                 .to_string(),
             amount: amount as f32,
-            number: number as i8,
+            number,
         });
     }
 
     LeftIncomeInfo {
         total_income: total_income as f32,
-        unit_snapshots: unit_snapshots,
+        unit_snapshots,
     }
 }
 
@@ -194,9 +194,7 @@ pub fn get_due_date_unit(
         });
     }
 
-    DueDateInfo {
-        unit_snapshots: unit_snapshots,
-    }
+    DueDateInfo { unit_snapshots }
 }
 
 #[skip_serializing_none]
@@ -227,15 +225,15 @@ pub fn get_interest(
     let mut unit_snapshots: Vec<InterestSnapShot> = Vec::new();
     let mut total_interests: f32 = 0.0;
     for unit in &units {
-        let unit_budgets = get_unit_budgets(&unit, start_date, end_date);
-        let self_budgets = get_self_budgets(&unit);
+        let unit_budgets = get_unit_budgets(unit, start_date, end_date);
+        let self_budgets = get_self_budgets(unit);
         for unit_budget in unit_budgets {
             let unit_count = if unit.unit_count <= 0 {
                 1
             } else {
                 unit.unit_count
             };
-            let mut interest: f32 = 0.0;
+            
             let mut interests_arr = Vec::<Option<f32>>::with_capacity(unit_count as usize);
             for i in 0..unit_count {
                 interests_arr[i as usize] = unit_budget.last_budget;
@@ -247,11 +245,11 @@ pub fn get_interest(
                     NaiveDate::parse_from_str(&self_budget.budget_date, "%Y-%m-%dT%H:%M:%SZ")
                         .unwrap();
                 if cmp_unit_time(&unit_budget, &date) != Ordering::Less {
-                    interests_arr[i] = Some(self_budget.budget as f32 * (-1 as f32));
+                    interests_arr[i] = Some(self_budget.budget as f32 * -1_f32);
                 }
             }
 
-            interest = interests_arr
+            let interest: f32 = interests_arr
                 .iter()
                 .copied()
                 .reduce(|a, b| {
@@ -285,7 +283,7 @@ pub fn get_interest(
     unit_snapshots.sort_by(|a, b| a.date.cmp(&b.date));
 
     InterestInfo {
-        total_interests: total_interests,
-        unit_snapshots: unit_snapshots,
+        total_interests,
+        unit_snapshots,
     }
 }

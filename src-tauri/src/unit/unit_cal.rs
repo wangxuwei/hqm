@@ -74,11 +74,9 @@ pub fn get_self_budgets(unit: &Unit) -> Vec<UnitBudget> {
     let mut self_budgets = Vec::new();
     let uc = unit.clone();
     if let Some(unit_budgets) = uc.unit_budgets {
-        for unit_budget in unit_budgets {
-            if let Some(ub) = unit_budget {
-                if ub.is_self {
-                    self_budgets.push(ub);
-                }
+        for ub in unit_budgets.into_iter().flatten() {
+            if ub.is_self {
+                self_budgets.push(ub);
             }
         }
     }
@@ -90,25 +88,24 @@ pub fn get_unit_times(
     start_date: Option<NaiveDate>,
     end_date: Option<NaiveDate>,
 ) -> Vec<UnitTime> {
-    let dates: Vec<NaiveDate> = get_all_dates(&unit);
+    let dates: Vec<NaiveDate> = get_all_dates(unit);
     let mut unit_times: Vec<UnitTime> = Vec::new();
-    for i in 0..dates.len() {
-        let m = dates[i];
+    for (i, m) in dates.iter().enumerate() {
         let mut pass = true;
         if let Some(s_date) = start_date {
-            if s_date > m {
+            if s_date > *m {
                 pass = false;
             }
         }
         if let Some(e_date) = end_date {
-            if e_date < m {
+            if e_date < *m {
                 pass = false;
             }
         }
 
         if pass {
             unit_times.push(UnitTime {
-                date: m,
+                date: *m,
                 num: (i + 1) as u8,
                 budget: None,
                 last_budget: None,
@@ -123,8 +120,8 @@ pub fn get_unit_budgets(
     start_date: Option<NaiveDate>,
     end_date: Option<NaiveDate>,
 ) -> Vec<UnitTime> {
-    let dates: Vec<NaiveDate> = get_all_dates(&unit);
-    let budgets: Vec<Option<f32>> = get_all_budgets(&unit);
+    let dates: Vec<NaiveDate> = get_all_dates(unit);
+    let budgets: Vec<Option<f32>> = get_all_budgets(unit);
     let mut unit_times: Vec<UnitTime> = Vec::new();
 
     for i in 0..dates.len() {
@@ -161,8 +158,8 @@ pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
     let date = NaiveDate::parse_from_str(&unit.last_bidded_date, "%Y-%m-%dT%H:%M:%SZ").unwrap();
 
     // 更新记录时间如果不存在，直接用bidDate, 但是biddedCount要是1
-    let prev_dates = next_all_dates(&unit, false);
-    let next_dates = next_all_dates(&unit, true);
+    let prev_dates = next_all_dates(unit, false);
+    let next_dates = next_all_dates(unit, true);
     let mut dates: Vec<NaiveDate> = Vec::new();
     for d in prev_dates.iter().rev() {
         dates.push(*d);
@@ -187,7 +184,7 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
         let v = match mark_bugdet {
             Some(v) => {
                 let date = NaiveDate::parse_from_str(&v.budget_date, "%Y-%m-%dT%H:%M:%SZ").unwrap();
-                num = num_by_date_time(&unit, &date) as isize;
+                num = num_by_date_time(unit, &date);
                 Some(v.budget as f32)
             }
             _ => None,
@@ -202,7 +199,7 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
     // 填充输入的
     let mut i: usize = 2;
     while i < count {
-        if let None = budgets[i - 1] {
+        if budgets[i - 1].is_none() {
             let v = if (i as f32) < (unit.count as f32 * 0.7) {
                 0.35
             } else {
@@ -294,7 +291,7 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                         Lunar::from(&last_plus_date_info),
                         Lunar::from(&next_plus_date_info),
                     );
-                    if months.len() > 0 {
+                    if !months.is_empty() {
                         // 这样计算，就算有闰月也只有一次
                         let m = &months[0];
                         let next_date_info = DateInfo {
@@ -333,7 +330,7 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                 if unit.is_lunar && unit.cycle == 1 {
                     let months =
                         leap_months(Lunar::from(&last_date_info), Lunar::from(&next_date_info));
-                    if months.len() > 0 {
+                    if !months.is_empty() {
                         // 这样计算，就算有闰月也只有一次
                         let m = &months[0];
                         let next_date_info = DateInfo {
@@ -353,13 +350,13 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
     }
 
     // 排下序得到结果
-    next_dates.sort_by(|d1: &NaiveDate, d2: &NaiveDate| d1.cmp(d2));
+    next_dates.sort();
 
     // 取消不符合当前时间的
     let d = date;
     let next_dates: Vec<NaiveDate> = next_dates
         .iter()
-        .map(|v| *v)
+        .copied()
         .filter(|d1: &NaiveDate| if next { &d < d1 } else { &d > d1 })
         .collect();
 

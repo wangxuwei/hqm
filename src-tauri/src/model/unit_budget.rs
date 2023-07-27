@@ -68,7 +68,7 @@ pub struct UnitBudgetForCreate {
 
 impl From<UnitBudgetForCreate> for Value {
     fn from(val: UnitBudgetForCreate) -> Self {
-        let data = map![
+        let data: BTreeMap<String, Value> = map![
             "unit_id".into() => val.unit_id.into(),
             "budget_date".into() => val.budget_date.into(),
             "budget".into() => val.budget.into(),

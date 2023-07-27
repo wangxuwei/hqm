@@ -73,7 +73,7 @@ pub fn format_lunar_date(lunar_date: Lunar) -> String {
 pub fn lunar_month_add(lunar_date: Lunar, num: i8) -> Lunar {
     let mut current_lunar = verify_lunar_date(&lunar_date);
     let mut n = num;
-    while num != 0 {
+    while n != 0 {
         let sign = if n > 0 { 1 } else { -1 };
         n -= sign;
 
@@ -145,16 +145,16 @@ pub fn verify_lunar_date(date: &Lunar) -> Lunar {
     if lunar_date.month <= 0 {
         let delta = 1 - lunar_date.month;
         lunar_date.year -= ((delta as f32) / 12.0).ceil() as i16;
-        lunar_date.month = 12 - (-1 * lunar_date.month % 12);
+        lunar_date.month = 12 - (-lunar_date.month % 12);
     } else if lunar_date.month > 12 {
         let delta = lunar_date.month - 12;
         lunar_date.year += ((delta as f32) / 12.0).ceil() as i16;
-        lunar_date.month = (delta % 12) as i8;
+        lunar_date.month = delta % 12;
     }
     if lunar_date.month == 0 {
         lunar_date.month = 12;
     }
-    return lunar_date;
+    lunar_date
 }
 
 fn leap_month_of_year(lunar_date: &Lunar) -> i8 {
