@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { MouseEvent, useState } from 'react';
-import { Unit } from '../../ts/entity-types';
+import { Unit } from '../../bindings';
 import { getPaymentInPeriod } from '../../ts/service-unit';
 import { toDateInfo } from '../../ts/unit-cal';
 import { formatDate, formatToLunar, mom, now } from '../../ts/utils-date';
@@ -88,12 +88,12 @@ export default function StatsPayment(){
                 const dateInfo = toDateInfo(r.date, unit.isLunar);
                 return (
                   <div className="tr" key={i}>
-                    <div className="td">{formatDate (r.date)} ({formatToLunar (r.date)}) {dateInfo.day == unit.day ? "(加标)":""}</div>
+                    <div className="td">{formatDate (r.date)} ({formatToLunar (r.date)}) {BigInt(dateInfo.day) == unit.day ? "(加标)":""}</div>
                     <div className="td">{unit.name}</div>
-                    <div className="td">{unit.budget}</div>
-                    <div className="td">{unit.unitCount}</div>
+                    <div className="td">{unit.budget.toString()}</div>
+                    <div className="td">{unit.unitCount.toString()}</div>
                     <div className="td">{r.payment}</div>
-                    <div className="td">{r.number} / {unit.count}</div>
+                    <div className="td">{r.number} / {unit.count.toString()}</div>
                   </div>)
               })
             }

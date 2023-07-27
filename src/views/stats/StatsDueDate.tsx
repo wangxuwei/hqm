@@ -1,6 +1,6 @@
 import { Moment } from 'moment';
 import { useState } from 'react';
-import { Unit } from '../../ts/entity-types';
+import { Unit } from '../../bindings';
 import { getDueDateUnitsInPeroid } from '../../ts/service-unit';
 import { formatDate, mom, now } from '../../ts/utils-date';
 import DatePicker from '../comp/DatePicker';
@@ -12,7 +12,6 @@ export default function StatsDueDate(){
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
   const [items, setItems] = useState([] as ({unit:Unit ,lastBudgetDate:Moment})[]);
   const [pickers, setShowPicker] = useState([false,false]);
-
 
   function refresh(){
     getDueDateUnitsInPeroid(startDate, endDate).then((result) => {
@@ -78,8 +77,8 @@ export default function StatsDueDate(){
                   return (
                   <div className="tr" key={i}>
                     <div className="td">{unit.name}</div>
-                    <div className="td">{unit.budget}</div>
-                    <div className="td">{unit.unitCount}</div>
+                    <div className="td">{unit.budget.toString()}</div>
+                    <div className="td">{unit.unitCount.toString()}</div>
                     <div className="td">{formatDate(r.lastBudgetDate) }</div>
                   </div>
                 )})

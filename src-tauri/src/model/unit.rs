@@ -18,7 +18,7 @@ use ts_rs::TS;
 // region:    --- Unit
 
 #[derive(Serialize, TS, Debug, Clone)]
-#[ts(export, export_to = "../src/bindings/")]
+#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
 pub struct Unit {
     // persistent
     // required
@@ -86,7 +86,7 @@ impl TryFrom<Object> for Unit {
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/")]
+#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
 pub struct UnitForCreate {
     // required
     // 名称
@@ -156,7 +156,7 @@ impl Creatable for UnitForCreate {}
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/")]
+#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
 pub struct UnitForUpdate {
     // 名称
     pub name: Option<String>,
