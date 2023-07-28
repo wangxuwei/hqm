@@ -1,18 +1,16 @@
-import { Moment } from 'moment';
 import { useState } from 'react';
 import { Unit } from '../../bindings';
-import { getValidLeftIncome } from '../../ts/service-unit';
-import { formatDate } from '../../ts/utils-date';
+import { unitFmc } from '../../model/fmc-unit';
 import "./StatsIncome.pcss";
 
 export default function StatsIncome() {
 
-  const [items, setItems] = useState([] as { unit: Unit, firstDate: Moment, lastBudgetDate: Moment, amount: number, number: number }[]);
+  const [items, setItems] = useState([] as { unit: Unit, firstDate: string, lastBudgetDate: string, amount: number, number: number }[]);
   const [total, setTotal] = useState(0);
 
 
   function refresh() {
-    getValidLeftIncome().then((result) => {
+    unitFmc.getValidLeftIncome().then((result) => {
       setItems(result.unitSnapshots);
       setTotal(result.totalIncome);
     });
@@ -45,8 +43,8 @@ export default function StatsIncome() {
                   <div className="td">{unit.budget.toString()}</div>
                   <div className="td">{r.amount}</div>
                   <div className="td">{unit.unitCount.toString()}</div>
-                  <div className="td">{formatDate(r.firstDate)}</div>
-                  <div className="td">{formatDate(r.lastBudgetDate)}</div>
+                  <div className="td">{r.firstDate}</div>
+                  <div className="td">{r.lastBudgetDate}</div>
                   <div className="td">{r.number} / {unit.count.toString()}</div>
                   <div className="td">{unit.plusCycle ? "是" : "否"}</div>
                 </div>

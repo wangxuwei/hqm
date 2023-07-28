@@ -6,6 +6,7 @@ class UnitBudgetFmc extends BaseFmc<UnitBudget, UnitBudgetForCreate, UnitBudgetF
   constructor() {
     super("UnitBudget");
   }
+
 }
 export const unitBudgetFmc = new UnitBudgetFmc();
 // #endregion --- UnitBudgetFmc

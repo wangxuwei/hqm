@@ -1,9 +1,9 @@
 import { Moment } from 'moment';
 import { MouseEvent, useState } from 'react';
 import { Unit } from '../../bindings';
-import { getPaymentInPeriod } from '../../ts/service-unit';
-import { toDateInfo } from '../../ts/unit-cal';
+import { unitFmc } from '../../model/fmc-unit';
 import { formatDate, formatToLunar, mom, now } from '../../ts/utils-date';
+import { solar2lunar } from '../../ts/utils-lunar';
 import DatePicker from '../comp/DatePicker';
 import "./StatsPayment.pcss";
 
@@ -15,7 +15,7 @@ export default function StatsPayment(){
   const [endDate, setEndDate] = useState(now().add(1, "months").date(0));
   const [items, setItems] = useState([] as {
     unit:Unit
-    date: Moment,
+    date: string,
     payment:number,
     number: number}[]);
   const [total, setTotal] = useState(0);
@@ -23,7 +23,7 @@ export default function StatsPayment(){
   const [pickers, setShowPicker] = useState([false,false]);
 
   function refresh(){
-    getPaymentInPeriod(startDate, endDate).then((result) => {
+    unitFmc.getPaymentInPeriod(startDate.toISOString(), endDate.toISOString()).then((result) => {
       setItems(result.unitSnapshots);
       setTotal(result.totalPayment);
     });
@@ -85,10 +85,15 @@ export default function StatsPayment(){
             {
               items.map((r, i) => {
                 const unit = r.unit;
-                const dateInfo = toDateInfo(r.date, unit.isLunar);
+                const date = mom(mom(r.date));
+                let day = date.date();
+                if(unit.isLunar){
+                  const lunarDate = solar2lunar(date);
+                  day = lunarDate.day;
+                }
                 return (
                   <div className="tr" key={i}>
-                    <div className="td">{formatDate (r.date)} ({formatToLunar (r.date)}) {dateInfo.day == unit.day ? "(加标)":""}</div>
+                    <div className="td">{formatDate (date)} ({formatToLunar (date)}) {day !== unit.day ? "(加标)":""}</div>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
                     <div className="td">{unit.unitCount.toString()}</div>

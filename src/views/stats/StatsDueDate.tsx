@@ -1,7 +1,7 @@
 import { Moment } from 'moment';
 import { useState } from 'react';
 import { Unit } from '../../bindings';
-import { getDueDateUnitsInPeroid } from '../../ts/service-unit';
+import { unitFmc } from '../../model/fmc-unit';
 import { formatDate, mom, now } from '../../ts/utils-date';
 import DatePicker from '../comp/DatePicker';
 import "./StatsDueDate.pcss";
@@ -10,11 +10,11 @@ export default function StatsDueDate() {
 
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
-  const [items, setItems] = useState([] as ({ unit: Unit, lastBudgetDate: Moment })[]);
+  const [items, setItems] = useState([] as ({ unit: Unit, lastBudgetDate: string })[]);
   const [pickers, setShowPicker] = useState([false, false]);
 
   function refresh() {
-    getDueDateUnitsInPeroid(startDate, endDate).then((result) => {
+    unitFmc.getDueDateUnitsInPeroid(startDate.toISOString(), endDate.toISOString()).then((result) => {
       setItems(result.unitSnapshots);
     });
   }
@@ -79,7 +79,7 @@ export default function StatsDueDate() {
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
                     <div className="td">{unit.unitCount.toString()}</div>
-                    <div className="td">{formatDate(r.lastBudgetDate)}</div>
+                    <div className="td">{r.lastBudgetDate}</div>
                   </div>
                 )
               })
