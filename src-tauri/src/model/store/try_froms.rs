@@ -24,15 +24,42 @@ impl TryFrom<W<Value>> for Array {
     }
 }
 
-impl TryFrom<W<Value>> for i64 {
-    type Error = Error;
-    fn try_from(val: W<Value>) -> Result<i64> {
-        match val.0 {
-            Value::Number(obj) => Ok(obj.as_int()),
-            _ => Err(Error::XValueNotOfType("i64")),
-        }
-    }
+#[macro_export]
+macro_rules! try_from_value_int {
+	($($t:ident),*) => {
+		$(
+            impl TryFrom<W<Value>> for $t {
+                type Error = Error;
+                fn try_from(val: W<Value>) -> Result<$t> {
+                    match val.0 {
+                        Value::Number(obj) => Ok(obj.as_int() as $t),
+                        _ => Err(Error::XValueNotOfType("$t")),
+                    }
+                }
+            }
+		)*
+	};
 }
+
+#[macro_export]
+macro_rules! try_from_value_float {
+	($($t:ident),*) => {
+		$(
+            impl TryFrom<W<Value>> for $t {
+                type Error = Error;
+                fn try_from(val: W<Value>) -> Result<$t> {
+                    match val.0 {
+                        Value::Number(obj) => Ok(obj.as_float() as $t),
+                        _ => Err(Error::XValueNotOfType("$t")),
+                    }
+                }
+            }
+		)*
+	};
+}
+
+try_from_value_int!(i8, i16, i32, i64);
+try_from_value_float!(f32, f64);
 
 impl TryFrom<W<Value>> for bool {
     type Error = Error;
