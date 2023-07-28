@@ -113,7 +113,7 @@ pub fn get_left_income(
             }
         }
         let self_budgets = get_self_budgets(unit);
-        let left_count = unit.unit_count - (self_budgets.len() as i64);
+        let left_count = unit.unit_count - (self_budgets.len() as i16);
         if left_count == 0 {
             continue;
         }

@@ -6,37 +6,37 @@ import { formatDate, mom, now } from '../../ts/utils-date';
 import DatePicker from '../comp/DatePicker';
 import "./StatsDueDate.pcss";
 
-export default function StatsDueDate(){
-  
+export default function StatsDueDate() {
+
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
-  const [items, setItems] = useState([] as ({unit:Unit ,lastBudgetDate:Moment})[]);
-  const [pickers, setShowPicker] = useState([false,false]);
+  const [items, setItems] = useState([] as ({ unit: Unit, lastBudgetDate: Moment })[]);
+  const [pickers, setShowPicker] = useState([false, false]);
 
-  function refresh(){
+  function refresh() {
     getDueDateUnitsInPeroid(startDate, endDate).then((result) => {
       setItems(result.unitSnapshots);
     });
   }
 
-  function onDateSelect(value:Moment, name:string){
-    if(name == 'start'){
+  function onDateSelect(value: Moment, name: string) {
+    if (name == 'start') {
       setStartDate(value);
-    }else{
+    } else {
       setEndDate(value);
     }
     setShowPicker([false, false]);
   }
 
-  function onDateCancel(name:string){
+  function onDateCancel(name: string) {
     setShowPicker([false, false]);
   }
 
-  function showPicker(e:MouseEvent, arr:boolean[]){
+  function showPicker(e: MouseEvent, arr: boolean[]) {
     e.stopPropagation();
     setShowPicker(arr);
   }
-  
+
   refresh();
 
   return (
@@ -45,15 +45,15 @@ export default function StatsDueDate(){
         <div className="filter-item">
           <span>开始时间：</span>
           <div className="date-input">
-            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))}/>
-            {pickers[0] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'start')} onCancel={onDateCancel} /> }
+            <input name="startDate" value={formatDate(startDate)} onChange={(e) => setStartDate(mom(e.target.value))} />
+            {pickers[0] && <DatePicker onSelect={(d: Moment) => onDateSelect(d, 'start')} onCancel={onDateCancel} />}
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
-            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))}/>
-            {pickers[1] && <DatePicker onSelect={(d:Moment) => onDateSelect(d, 'end')} onCancel={onDateCancel} /> }
+            <input name="endDate" value={formatDate(endDate)} onChange={(e) => setEndDate(mom(e.target.value))} />
+            {pickers[1] && <DatePicker onSelect={(d: Moment) => onDateSelect(d, 'end')} onCancel={onDateCancel} />}
           </div>
         </div>
         <div className="filter-item">
@@ -71,18 +71,19 @@ export default function StatsDueDate(){
             </div>
           </div>
           <div className="tbody">
-              {
-                items.map((r, i) => {
-                  const unit = r.unit;
-                  return (
+            {
+              items.map((r, i) => {
+                const unit = r.unit;
+                return (
                   <div className="tr" key={i}>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
                     <div className="td">{unit.unitCount.toString()}</div>
-                    <div className="td">{formatDate(r.lastBudgetDate) }</div>
+                    <div className="td">{formatDate(r.lastBudgetDate)}</div>
                   </div>
-                )})
-              }
+                )
+              })
+            }
           </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ pub struct UnitBudget {
     // 标时间
     pub budget_date: String,
     // 标金
-    pub budget: i64,
+    pub budget: i16,
     // 是否是自己标的
     pub is_self: bool,
 }
@@ -61,7 +61,7 @@ pub struct UnitBudgetForCreate {
     // 标时间
     pub budget_date: String,
     // 标金
-    pub budget: i64,
+    pub budget: i16,
     // 是否是自己标的
     pub is_self: bool,
 }
@@ -93,7 +93,7 @@ pub struct UnitBudgetForUpdate {
     // 标时间
     pub budget_date: Option<String>,
     // 标金
-    pub budget: Option<i64>,
+    pub budget: Option<i16>,
     // 是否是自己标的
     pub is_self: Option<bool>,
 }

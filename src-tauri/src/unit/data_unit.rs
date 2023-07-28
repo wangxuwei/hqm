@@ -12,7 +12,7 @@ pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
             unit_budgets.push(UnitBudgetForCreate {
                 unit_id: "".into(),
                 budget_date: bd["budgetDate"].to_string(),
-                budget: bd["budget"].as_i64().unwrap(),
+                budget: bd["budget"].as_i64().unwrap() as i16,
                 is_self: bd["isSelf"].as_bool().unwrap(),
             })
         }
@@ -21,15 +21,18 @@ pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
             name: el["name"].to_string(),
             is_lunar: el["isLunar"].as_bool().unwrap(),
             last_bidded_date: el["lastBiddedDate"].to_string(),
-            day: el["day"].as_i64().unwrap(),
-            cycle: el["cycle"].as_i64().unwrap(),
-            plus_day: el["plusDay"].as_i64().unwrap(),
-            plus_cycle: el["plusCycle"].as_i64().unwrap(),
-            budget: el["budget"].as_i64().unwrap(),
-            count: el["count"].as_i64().unwrap(),
-            bidded_count: el["biddedCount"].as_i64().unwrap(),
-            unit_count: el["unitCount"].as_i64().unwrap(),
-            amount: el["amount"].as_i64(),
+            day: el["day"].as_i64().unwrap() as i16,
+            cycle: el["cycle"].as_i64().unwrap() as i16,
+            plus_day: el["plusDay"].as_i64().unwrap() as i16,
+            plus_cycle: el["plusCycle"].as_i64().unwrap() as i16,
+            budget: el["budget"].as_i64().unwrap() as i16,
+            count: el["count"].as_i64().unwrap() as i16,
+            bidded_count: el["biddedCount"].as_i64().unwrap() as i16,
+            unit_count: el["unitCount"].as_i64().unwrap() as i16,
+            amount: match el["amount"].as_i64() {
+                Some(v) => Some(v as i16),
+                _ => None,
+            },
             description: Some(el["description"].to_string()),
             unit_budgets: Some(unit_budgets),
         });

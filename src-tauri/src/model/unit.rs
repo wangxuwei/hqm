@@ -17,6 +17,7 @@ use ts_rs::TS;
 
 // region:    --- Unit
 
+#[skip_serializing_none]
 #[derive(Serialize, TS, Debug, Clone)]
 #[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
 pub struct Unit {
@@ -30,25 +31,25 @@ pub struct Unit {
     // 上次的时间 与已标数量对应
     pub last_bidded_date: String,
     // 每个月哪一天开始
-    pub day: i64,
+    pub day: i16,
     // 频率 平均几月一次，有可能半月
-    pub cycle: i64,
+    pub cycle: i16,
     // 加标月哪一天开始
-    pub plus_day: Option<i64>,
+    pub plus_day: Option<i16>,
     // 加标频率 平均几月一次，有可能半月
-    pub plus_cycle: Option<i64>,
+    pub plus_cycle: Option<i16>,
     // 本金
-    pub budget: i64,
+    pub budget: i16,
     // 会员数
-    pub count: i64,
+    pub count: i16,
     // 已标
-    pub bidded_count: i64,
+    pub bidded_count: i16,
     // 会支数
-    pub unit_count: i64,
+    pub unit_count: i16,
 
     // optional
     // 预估总额
-    pub amount: Option<i64>,
+    pub amount: Option<i16>,
     // 备注
     pub description: Option<String>,
 
@@ -96,25 +97,25 @@ pub struct UnitForCreate {
     // 上次的时间 与已标数量对应
     pub last_bidded_date: String,
     // 每个月哪一天开始
-    pub day: i64,
+    pub day: i16,
     // 频率 平均几月一次，有可能半月
-    pub cycle: i64,
+    pub cycle: i16,
     // 加标月哪一天开始
-    pub plus_day: i64,
+    pub plus_day: i16,
     // 加标频率 平均几月一次，有可能半月
-    pub plus_cycle: i64,
+    pub plus_cycle: i16,
     // 本金
-    pub budget: i64,
+    pub budget: i16,
     // 会员数
-    pub count: i64,
+    pub count: i16,
     // 已标
-    pub bidded_count: i64,
+    pub bidded_count: i16,
     // 会支数
-    pub unit_count: i64,
+    pub unit_count: i16,
 
     // optional
     // 预估总额
-    pub amount: Option<i64>,
+    pub amount: Option<i16>,
     // 备注
     pub description: Option<String>,
 
@@ -165,23 +166,23 @@ pub struct UnitForUpdate {
     // 上次的时间 与已标数量对应
     pub last_bidded_date: Option<String>,
     // 每个月哪一天开始
-    pub day: Option<i64>,
+    pub day: Option<i16>,
     // 频率 平均几月一次，有可能半月
-    pub cycle: Option<i64>,
+    pub cycle: Option<i16>,
     // 加标月哪一天开始
-    pub plus_day: Option<i64>,
+    pub plus_day: Option<i16>,
     // 加标频率 平均几月一次，有可能半月
-    pub plus_cycle: Option<i64>,
+    pub plus_cycle: Option<i16>,
     // 本金
-    pub budget: Option<i64>,
+    pub budget: Option<i16>,
     // 会员数
-    pub count: Option<i64>,
+    pub count: Option<i16>,
     // 已标
-    pub bidded_count: Option<i64>,
+    pub bidded_count: Option<i16>,
     // 会支数
-    pub unit_count: Option<i64>,
+    pub unit_count: Option<i16>,
     // 预估总额
-    pub amount: Option<i64>,
+    pub amount: Option<i16>,
     // 备注
     pub description: Option<String>,
 }

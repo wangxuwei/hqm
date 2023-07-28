@@ -88,7 +88,7 @@ export default function StatsPayment(){
                 const dateInfo = toDateInfo(r.date, unit.isLunar);
                 return (
                   <div className="tr" key={i}>
-                    <div className="td">{formatDate (r.date)} ({formatToLunar (r.date)}) {BigInt(dateInfo.day) == unit.day ? "(加标)":""}</div>
+                    <div className="td">{formatDate (r.date)} ({formatToLunar (r.date)}) {dateInfo.day == unit.day ? "(加标)":""}</div>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
                     <div className="td">{unit.unitCount.toString()}</div>
