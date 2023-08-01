@@ -13,14 +13,14 @@ use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use surrealdb::sql::{Object, Value};
+use surrealdb::sql::{Data, Object, Value};
 use ts_rs::TS;
 
 // region:    --- UnitBudget
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug, Clone)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudget {
     pub id: String,
     // 会ID
@@ -54,7 +54,7 @@ impl TryFrom<Object> for UnitBudget {
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudgetForCreate {
     // 会ID
     pub unit_id: String,
@@ -86,7 +86,7 @@ impl Creatable for UnitBudgetForCreate {}
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudgetForUpdate {
     // 会ID
     pub unit_id: Option<String>,

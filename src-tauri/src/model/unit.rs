@@ -19,7 +19,7 @@ use ts_rs::TS;
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug, Clone)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct Unit {
     // persistent
     // required
@@ -87,7 +87,7 @@ impl TryFrom<Object> for Unit {
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitForCreate {
     // required
     // 名称
@@ -101,9 +101,9 @@ pub struct UnitForCreate {
     // 频率 平均几月一次，有可能半月
     pub cycle: i16,
     // 加标月哪一天开始
-    pub plus_day: i16,
+    pub plus_day: Option<i16>,
     // 加标频率 平均几月一次，有可能半月
-    pub plus_cycle: i16,
+    pub plus_cycle: Option<i16>,
     // 本金
     pub budget: i16,
     // 会员数
@@ -132,12 +132,19 @@ impl From<UnitForCreate> for Value {
             ("last_bidded_date".into(), val.last_bidded_date.into()),
             ("day".into(), val.day.into()),
             ("cycle".into(), val.cycle.into()),
-            ("plus_cycle".into(), val.plus_cycle.into()),
             ("budget".into(), val.budget.into()),
             ("count".into(), val.count.into()),
             ("bidded_count".into(), val.bidded_count.into()),
             ("unit_count".into(), val.unit_count.into()),
         ]);
+
+        if let Some(plus_day) = val.amount {
+            data.insert("plus_day".into(), plus_day.into());
+        }
+
+        if let Some(plus_cycle) = val.amount {
+            data.insert("plus_cycle".into(), plus_cycle.into());
+        }
 
         if let Some(amount) = val.amount {
             data.insert("amount".into(), amount.into());
@@ -157,7 +164,7 @@ impl Creatable for UnitForCreate {}
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitForUpdate {
     // 名称
     pub name: Option<String>,

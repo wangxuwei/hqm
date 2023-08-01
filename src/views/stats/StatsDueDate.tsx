@@ -10,12 +10,12 @@ export default function StatsDueDate() {
 
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
-  const [items, setItems] = useState([] as ({ unit: Unit, lastBudgetDate: string })[]);
+  const [items, setItems] = useState([] as ({ unit: Unit, last_budget_date: string })[]);
   const [pickers, setShowPicker] = useState([false, false]);
 
   function refresh() {
     unitFmc.getDueDateUnitsInPeroid(startDate.toISOString(), endDate.toISOString()).then((result) => {
-      setItems(result.unitSnapshots);
+      setItems(result.unit_snapshots);
     });
   }
 
@@ -78,8 +78,8 @@ export default function StatsDueDate() {
                   <div className="tr" key={i}>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
-                    <div className="td">{unit.unitCount.toString()}</div>
-                    <div className="td">{r.lastBudgetDate}</div>
+                    <div className="td">{unit.unit_count.toString()}</div>
+                    <div className="td">{r.last_budget_date}</div>
                   </div>
                 )
               })

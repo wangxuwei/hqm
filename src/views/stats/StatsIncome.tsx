@@ -5,14 +5,14 @@ import "./StatsIncome.pcss";
 
 export default function StatsIncome() {
 
-  const [items, setItems] = useState([] as { unit: Unit, firstDate: string, lastBudgetDate: string, amount: number, number: number }[]);
+  const [items, setItems] = useState([] as { unit: Unit, first_date: string, last_budget_date: string, amount: number, number: number }[]);
   const [total, setTotal] = useState(0);
 
 
   function refresh() {
     unitFmc.getValidLeftIncome().then((result) => {
-      setItems(result.unitSnapshots);
-      setTotal(result.totalIncome);
+      setItems(result.unit_snapshots);
+      setTotal(result.total_income);
     });
   }
 
@@ -42,11 +42,11 @@ export default function StatsIncome() {
                   <div className="td">{unit.name}</div>
                   <div className="td">{unit.budget.toString()}</div>
                   <div className="td">{r.amount}</div>
-                  <div className="td">{unit.unitCount.toString()}</div>
-                  <div className="td">{r.firstDate}</div>
-                  <div className="td">{r.lastBudgetDate}</div>
+                  <div className="td">{unit.unit_count.toString()}</div>
+                  <div className="td">{r.first_date}</div>
+                  <div className="td">{r.last_budget_date}</div>
                   <div className="td">{r.number} / {unit.count.toString()}</div>
-                  <div className="td">{unit.plusCycle ? "是" : "否"}</div>
+                  <div className="td">{unit.plus_cycle ? "是" : "否"}</div>
                 </div>
               )
             })}

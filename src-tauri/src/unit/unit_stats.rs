@@ -10,7 +10,7 @@ use super::unit_cal::{cmp_unit_time, get_self_budgets, get_unit_budgets};
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct PaymentSnapShot {
     unit: Unit,
     date: String,
@@ -20,7 +20,7 @@ pub struct PaymentSnapShot {
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct PaymentInfo {
     total_payment: f32,
     unit_snapshots: Vec<PaymentSnapShot>,
@@ -73,7 +73,7 @@ pub fn get_payment(
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct LeftIncomeSnapShot {
     unit: Unit,
     first_date: String,
@@ -84,7 +84,7 @@ pub struct LeftIncomeSnapShot {
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct LeftIncomeInfo {
     total_income: f32,
     unit_snapshots: Vec<LeftIncomeSnapShot>,
@@ -152,7 +152,7 @@ pub fn get_left_income(
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct DueDateSnapShot {
     unit: Unit,
     last_budget_date: String,
@@ -160,7 +160,7 @@ pub struct DueDateSnapShot {
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct DueDateInfo {
     unit_snapshots: Vec<DueDateSnapShot>,
 }
@@ -199,7 +199,7 @@ pub fn get_due_date_unit(
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct InterestSnapShot {
     unit: Unit,
     date: String,
@@ -211,7 +211,7 @@ pub struct InterestSnapShot {
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct InterestInfo {
     total_interests: f32,
     unit_snapshots: Vec<InterestSnapShot>,

@@ -50,6 +50,17 @@ pub async fn delete_unit(
 }
 
 #[command]
+pub async fn list_units(app: AppHandle<Wry>, params: ListParams<Value>) -> IpcResponse<Vec<Unit>> {
+    match Ctx::from_app(app) {
+        Ok(ctx) => match params.filter.map(serde_json::from_value).transpose() {
+            Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
+            Err(err) => Err(Error::JsonSerde(err)).into(),
+        },
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
 pub async fn get_payment_in_period(
     app: AppHandle<Wry>,
     params: ListParams<Value>,

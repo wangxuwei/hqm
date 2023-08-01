@@ -35,6 +35,7 @@ async fn main() -> Result<()> {
             ipc::create_unit,
             ipc::update_unit,
             ipc::delete_unit,
+            ipc::list_units,
             ipc::get_payment_in_period,
             ipc::get_valid_left_income,
             ipc::get_due_date_units_in_peroid,
