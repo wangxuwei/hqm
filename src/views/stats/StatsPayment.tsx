@@ -24,8 +24,8 @@ export default function StatsPayment(){
 
   function refresh(){
     unitFmc.getPaymentInPeriod(startDate.toISOString(), endDate.toISOString()).then((result) => {
-      setItems(result.unitSnapshots);
-      setTotal(result.totalPayment);
+      setItems(result.unit_snapshots);
+      setTotal(result.total_payment);
     });
   }
 
@@ -87,7 +87,7 @@ export default function StatsPayment(){
                 const unit = r.unit;
                 const date = mom(mom(r.date));
                 let day = date.date();
-                if(unit.isLunar){
+                if(unit.is_lunar){
                   const lunarDate = solar2lunar(date);
                   day = lunarDate.day;
                 }
@@ -96,7 +96,7 @@ export default function StatsPayment(){
                     <div className="td">{formatDate (date)} ({formatToLunar (date)}) {day !== unit.day ? "(加标)":""}</div>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
-                    <div className="td">{unit.unitCount.toString()}</div>
+                    <div className="td">{unit.unit_count.toString()}</div>
                     <div className="td">{r.payment}</div>
                     <div className="td">{r.number} / {unit.count.toString()}</div>
                   </div>)

@@ -4,6 +4,7 @@ import "./Nav.pcss";
 const menus = [
   {tab: "home", label:"首页"},
   {tab: "stats", label:"互助会"},
+  {tab: "units", label:"会管理"},
   {tab: "tools", label:"工具"}
 ];
 

@@ -43,7 +43,7 @@ where
 /// For now, all mutation queries will return an {id} struct.
 /// Note: Keep it light, and client can do a get if needed.
 #[derive(TS, Serialize, Clone)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct ModelMutateResultData {
     pub id: String,
 }

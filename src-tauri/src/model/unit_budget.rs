@@ -20,7 +20,7 @@ use ts_rs::TS;
 
 #[skip_serializing_none]
 #[derive(Serialize, TS, Debug, Clone)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudget {
     pub id: String,
     // 会ID
@@ -54,7 +54,7 @@ impl TryFrom<Object> for UnitBudget {
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudgetForCreate {
     // 会ID
     pub unit_id: String,
@@ -86,7 +86,7 @@ impl Creatable for UnitBudgetForCreate {}
 
 #[skip_serializing_none]
 #[derive(Deserialize, TS, Debug)]
-#[ts(export, export_to = "../src/bindings/", rename_all = "camelCase")]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudgetForUpdate {
     // 会ID
     pub unit_id: Option<String>,
