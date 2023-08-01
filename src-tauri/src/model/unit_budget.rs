@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use surrealdb::sql::{Object, Value};
+use surrealdb::sql::{Data, Object, Value};
 use ts_rs::TS;
 
 // region:    --- UnitBudget

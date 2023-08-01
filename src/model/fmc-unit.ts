@@ -44,5 +44,6 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
   }
 
 }
+
 export const unitFmc = new UnitFmc();
 // #endregion --- UnitFmc
