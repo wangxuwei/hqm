@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useModal } from '@ebay/nice-modal-react';
+import { Button } from 'antd';
+import { useCallback, useState } from 'react';
 import { Unit, UnitForCreate } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import UnitDg from './UnitDg';
@@ -9,7 +11,6 @@ import "./Units.pcss";
 function Units(){
 
   const [items, setItems] = useState([] as Unit[]);
-  const [showEditDg, setShowEditDg] = useState(false);
 
   function refresh() {
     unitFmc.listUnits().then((result) => {
@@ -17,39 +18,26 @@ function Units(){
     });
   }
 
-  function add() {
-    // setShowEditDg(true);
-    unitFmc.create({
-      name: "测试", 
-      is_lunar: false, 
-      last_bidded_date: '2020-02-02T00:00:00.000Z', 
-      day: 3, 
-      cycle: 1, 
-      budget: 1000, 
-      count: 20, 
-      bidded_count:  0, 
-      unit_count: 1
-    }).then(()=>{
-      refresh();
+  const unitModal = useModal(UnitDg);
+  const add = useCallback(() => {
+    unitModal.show({  }).then(() => {
+      // do something if the task in the modal finished.
     });
-  }
+  }, [unitModal]);
 
   async function onSave(u: UnitForCreate) {
     await unitFmc.create(u);
-    setShowEditDg(false);
   }
 
   async function onCancel() {
-    setShowEditDg(false);
   }
 
   refresh();
   
   return (
     <div className="Units screen">
-      {showEditDg && <UnitDg onSave={(d: UnitForCreate) => onSave(d)} onCancel={onCancel} />}
       <div className="screen-header">
-        <button className="action-item" onClick={add}>添加</button>
+        <Button className="action-item" onClick={add}>添加</Button>
       </div>
       <div className="screen-main">
         <div className="table">
