@@ -1,53 +1,46 @@
-import { UnitForUpdate } from '../../bindings';
+import NiceModal, { useModal } from '@ebay/nice-modal-react';
+import { Form, Modal } from 'antd';
+import { useCallback } from 'react';
+import { Unit } from '../../bindings';
+import { antdModal } from '../../ts/nice-modal-fix';
 import "./UnitDg.pcss";
 
-function UnitDg(props:{onSave?:Function, onCancel?:Function, date?:UnitForUpdate}, state:{}){
+export default NiceModal.create(({ unit }: {unit?:Unit}) => {
+  const modal = useModal();
+  const [form] = Form.useForm();
+  const meta = {
+    initialValues: unit,
+    fields: [
+      { key: 'name', label: 'Name', required: true },
+      { key: 'job', label: 'Job Title', required: true },
+    ],
+  };
 
-  function done(){
+  const handleSubmit = useCallback(() => {
+    form.validateFields().then(() => {
+      const newUnit = { ...form.getFieldsValue() };
+      // In real case, you may call API to create unit or update unit
+      if (!unit) {
+        newUnit.id = String(Date.now());
+      } else {
+        newUnit.id = unit.id;
+      }
+      modal.resolve(newUnit);
+      modal.hide();
+    });
+  }, [modal, unit, form]);
 
-  }
-
-  function cancel(){
-
-  }
 
   return (
-    <div className="UnitDg">
-      <div className='dg-header'>
-        会编辑
-      </div>
-      <div className='dg-main'>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-        <div className='f-field'>
-          <input name="name" placeholder='请输入会名称'/>
-        </div>
-      </div>
-
-      <div className='dg-footer'>
-        <button className="action-item" onClick={done}>添加</button>
-        <button className="action-item" onClick={cancel}>取消</button>
-      </div>
-    </div>
-  )
-}
-
-
-
-export default UnitDg;
+    <Modal
+      {...antdModal(modal)}
+      title={unit ? '会信息修改' : '添加会'}
+      okText={unit ? '修改' : '添加'}
+      onOk={handleSubmit}
+    >
+      <Form form={form}>
+        dfdfdf
+      </Form>
+    </Modal>
+  );
+});
