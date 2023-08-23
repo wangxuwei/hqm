@@ -83,7 +83,7 @@ export default function StatsPayment(){
           </div>
           <div className="tbody">
             {
-              items.map((r, i) => {
+              (items??[]).map((r, i) => {
                 const unit = r.unit;
                 const date = mom(mom(r.date));
                 let day = date.date();
