@@ -19,17 +19,12 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
   // };
 
   const handleSubmit = useCallback(() => {
-    // form.validateFields().then(() => {
-    //   const newUnit = { ...form.getFieldsValue() };
-    //   // In real case, you may call API to create unit or update unit
-    //   if (!unit) {
-    //     newUnit.id = String(Date.now());
-    //   } else {
-    //     newUnit.id = unit.id;
-    //   }
-    //   modal.resolve(newUnit);
-    //   modal.hide();
-    // });
+    form.validateFields().then(() => {
+      const newUnit = { ...form.getFieldsValue() };
+      console.log(newUnit);
+      modal.resolve(newUnit);
+      modal.hide();
+    }).catch((e) => {console.log(e,form.getFieldsValue()); });
   }, [modal, unit, form]);
 
   const frequency = [
@@ -39,7 +34,11 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
     { value: 4, label: '四月一次' },
     { value: 5, label: '五月一次' },
     { value: 6, label: '六月一次' }
-  ]
+  ];
+
+  const validateMessages = {
+    required: '${label}是必填项!',
+  }
 
   return (
     <Modal
@@ -50,13 +49,14 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
       className='UnitDg'
     >
       <Form form={form}
-        labelCol={{ span: 5 }}>
+        labelCol={{ span: 5 }}
+        validateMessages={validateMessages}
+        initialValues={{is_lunar:true, day: 1, plus_day: 1, cycle:1, plus_cycle: 1, count:10, bidded_count: 0, unit_count: 1}}>
         <Form.Item name="name" label="名称" rules={[{ required: true }]}>
           <Input />
         </Form.Item>
         <Form.Item name="is_lunar" label="类型" rules={[{ required: true }]}>
           <Select
-            defaultValue={true}
             options={[
               { value: true, label: '农历' },
               { value: false, label: '新历' }
@@ -64,14 +64,15 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
           />
         </Form.Item>
 
-        <Form.Item name="day" label="正标日" rules={[{ required: true }]}>
-          <InputNumber min={1} max={31} defaultValue={1} />
+        <Form.Item label="正标日">
+          <Form.Item name="day" label="正标日" rules={[{ required: true }]} noStyle>
+            <InputNumber min={1} max={31} />
+          </Form.Item>
           <span className="ant-form-text day-text">日</span>
         </Form.Item>
 
         <Form.Item name="cycle" label="正标周期" rules={[{ required: true }]}>
           <Select
-            defaultValue={1}
             options={frequency}
           />
         </Form.Item>
@@ -82,14 +83,15 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
 
         {plus && 
           <>
-            <Form.Item name="plus_day" label="加标日" rules={[{ required: true }]}>
-              <InputNumber min={1} max={31} defaultValue={15} />
+            <Form.Item label="加标日">
+              <Form.Item name="plus_day" label="加标日" rules={[{ required: true }]} noStyle>
+                <InputNumber min={1} max={31}/>
+              </Form.Item>
               <span className="ant-form-text day-text">日</span>
             </Form.Item>
 
             <Form.Item name="plus_cycle" label="加标周期" rules={[{ required: true }]}>
               <Select
-                defaultValue={1}
                 options={frequency}
               />
             </Form.Item>
@@ -102,15 +104,15 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
         </Form.Item>
 
         <Form.Item name="count" label="会员数" rules={[{ required: true }]}>
-          <InputNumber min={1} max={80} defaultValue={1} />
+          <InputNumber min={1} max={80} />
         </Form.Item>
 
         <Form.Item name="bidded_count" label="已标次数" rules={[{ required: true }]}>
-          <InputNumber min={0} max={4} defaultValue={0} />
+          <InputNumber min={0} max={4} />
         </Form.Item>
 
         <Form.Item name="unit_count" label="拥有期数" rules={[{ required: true }]}>
-          <InputNumber min={1} max={5} defaultValue={1} />
+          <InputNumber min={1} max={5} />
         </Form.Item>
 
         <Form.Item name="amount" label="预估会金额" rules={[{ required: true }]}>
