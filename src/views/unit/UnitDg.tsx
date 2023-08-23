@@ -1,35 +1,45 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Form, Modal } from 'antd';
-import { useCallback } from 'react';
+import { Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import { useCallback, useState } from 'react';
 import { Unit } from '../../bindings';
 import { antdModal } from '../../ts/nice-modal-fix';
 import "./UnitDg.pcss";
 
-export default NiceModal.create(({ unit }: {unit?:Unit}) => {
+export default NiceModal.create(({ unit }: { unit?: Unit }) => {
   const modal = useModal();
   const [form] = Form.useForm();
-  const meta = {
-    initialValues: unit,
-    fields: [
-      { key: 'name', label: 'Name', required: true },
-      { key: 'job', label: 'Job Title', required: true },
-    ],
-  };
+  const [plus, setPlus] = useState(false);
+  // const meta = {
+  //   initialValues: unit,
+  //   fields: [
+  //     { key: 'name', label: 'Name', required: true },
+  //     { key: 'job', label: 'Job Title', required: true },
+  //   ],
+  // };
 
   const handleSubmit = useCallback(() => {
-    form.validateFields().then(() => {
-      const newUnit = { ...form.getFieldsValue() };
-      // In real case, you may call API to create unit or update unit
-      if (!unit) {
-        newUnit.id = String(Date.now());
-      } else {
-        newUnit.id = unit.id;
-      }
-      modal.resolve(newUnit);
-      modal.hide();
-    });
+    // form.validateFields().then(() => {
+    //   const newUnit = { ...form.getFieldsValue() };
+    //   // In real case, you may call API to create unit or update unit
+    //   if (!unit) {
+    //     newUnit.id = String(Date.now());
+    //   } else {
+    //     newUnit.id = unit.id;
+    //   }
+    //   modal.resolve(newUnit);
+    //   modal.hide();
+    // });
   }, [modal, unit, form]);
 
+  const frequency = [
+    { value: 1, label: '一月一次' },
+    { value: 2, label: '两月一次' },
+    { value: 3, label: '三月一次' },
+    { value: 4, label: '四月一次' },
+    { value: 5, label: '五月一次' },
+    { value: 6, label: '六月一次' }
+  ]
 
   return (
     <Modal
@@ -37,9 +47,79 @@ export default NiceModal.create(({ unit }: {unit?:Unit}) => {
       title={unit ? '会信息修改' : '添加会'}
       okText={unit ? '修改' : '添加'}
       onOk={handleSubmit}
+      className='UnitDg'
     >
-      <Form form={form}>
-        dfdfdf
+      <Form form={form}
+        labelCol={{ span: 5 }}>
+        <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="is_lunar" label="类型" rules={[{ required: true }]}>
+          <Select
+            defaultValue={true}
+            options={[
+              { value: true, label: '农历' },
+              { value: false, label: '新历' }
+            ]}
+          />
+        </Form.Item>
+
+        <Form.Item name="day" label="正标日" rules={[{ required: true }]}>
+          <InputNumber min={1} max={31} defaultValue={1} />
+          <span className="ant-form-text day-text">日</span>
+        </Form.Item>
+
+        <Form.Item name="cycle" label="正标周期" rules={[{ required: true }]}>
+          <Select
+            defaultValue={1}
+            options={frequency}
+          />
+        </Form.Item>
+
+        <Form.Item label="是否加标" valuePropName="checked">
+          <Switch checked={plus} onChange={(checked)=>setPlus(checked)}/>
+        </Form.Item>
+
+        {plus && 
+          <>
+            <Form.Item name="plus_day" label="加标日" rules={[{ required: true }]}>
+              <InputNumber min={1} max={31} defaultValue={15} />
+              <span className="ant-form-text day-text">日</span>
+            </Form.Item>
+
+            <Form.Item name="plus_cycle" label="加标周期" rules={[{ required: true }]}>
+              <Select
+                defaultValue={1}
+                options={frequency}
+              />
+            </Form.Item>
+          </>
+        }
+        
+
+        <Form.Item name="budget" label="标金" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="count" label="会员数" rules={[{ required: true }]}>
+          <InputNumber min={1} max={80} defaultValue={1} />
+        </Form.Item>
+
+        <Form.Item name="bidded_count" label="已标次数" rules={[{ required: true }]}>
+          <InputNumber min={0} max={4} defaultValue={0} />
+        </Form.Item>
+
+        <Form.Item name="unit_count" label="拥有期数" rules={[{ required: true }]}>
+          <InputNumber min={1} max={5} defaultValue={1} />
+        </Form.Item>
+
+        <Form.Item name="amount" label="预估会金额" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item name="description" label="描述">
+          <TextArea rows={4} />
+        </Form.Item>
       </Form>
     </Modal>
   );
