@@ -1,8 +1,9 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
+import { DatePicker, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import { useCallback, useState } from 'react';
 import { Unit } from '../../bindings';
+import { unitFmc } from '../../model/fmc-unit';
 import { antdModal } from '../../ts/nice-modal-fix';
 import "./UnitDg.pcss";
 
@@ -19,12 +20,13 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
   // };
 
   const handleSubmit = useCallback(() => {
-    form.validateFields().then(() => {
+    form.validateFields().then(async () => {
       const newUnit = { ...form.getFieldsValue() };
       console.log(newUnit);
+      await unitFmc.create(newUnit);
       modal.resolve(newUnit);
       modal.hide();
-    }).catch((e) => {console.log(e,form.getFieldsValue()); });
+    }).catch((e) => {console.log(e)});
   }, [modal, unit, form]);
 
   const frequency = [
@@ -40,6 +42,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
     required: '${label}是必填项!',
   }
 
+  const lblBidedTxt = plus ? "加标" : "标会" ;
   return (
     <Modal
       {...antdModal(modal)}
@@ -64,7 +67,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
           />
         </Form.Item>
 
-        <Form.Item label="正标日">
+        <Form.Item label="正标日" rules={[{ required: true }]}>
           <Form.Item name="day" label="正标日" rules={[{ required: true }]} noStyle>
             <InputNumber min={1} max={31} />
           </Form.Item>
@@ -83,7 +86,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
 
         {plus && 
           <>
-            <Form.Item label="加标日">
+            <Form.Item label="加标日" rules={[{ required: true }]}>
               <Form.Item name="plus_day" label="加标日" rules={[{ required: true }]} noStyle>
                 <InputNumber min={1} max={31}/>
               </Form.Item>
@@ -97,18 +100,23 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
             </Form.Item>
           </>
         }
+
+        <Form.Item label={`上次${lblBidedTxt}`}>
+          <Form.Item name="last_bidded_date" label={`上次${lblBidedTxt}时间`} rules={[{ required: true }]} noStyle>
+            <DatePicker />
+          </Form.Item>
+        </Form.Item>
         
+        <Form.Item name="bidded_count" label="已标次数" rules={[{ required: true }]}>
+          <InputNumber />
+        </Form.Item>
 
         <Form.Item name="budget" label="标金" rules={[{ required: true }]}>
-          <Input />
+          <InputNumber />
         </Form.Item>
 
         <Form.Item name="count" label="会员数" rules={[{ required: true }]}>
           <InputNumber min={1} max={80} />
-        </Form.Item>
-
-        <Form.Item name="bidded_count" label="已标次数" rules={[{ required: true }]}>
-          <InputNumber min={0} max={4} />
         </Form.Item>
 
         <Form.Item name="unit_count" label="拥有期数" rules={[{ required: true }]}>
@@ -116,7 +124,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
         </Form.Item>
 
         <Form.Item name="amount" label="预估会金额" rules={[{ required: true }]}>
-          <Input />
+          <InputNumber />
         </Form.Item>
 
         <Form.Item name="description" label="描述">
