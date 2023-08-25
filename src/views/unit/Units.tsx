@@ -1,5 +1,5 @@
 import { useModal } from '@ebay/nice-modal-react';
-import { Button } from 'antd';
+import { Button, Table } from 'antd';
 import { useCallback, useState } from 'react';
 import { Unit, UnitForCreate } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
@@ -33,36 +33,30 @@ function Units(){
   }
 
   refresh();
+
+  const columns = [
+    {
+      title: '名称',
+      dataIndex: 'name',
+    },
+    {
+      title: '标金',
+      dataIndex: 'budget',
+    },
+    {
+      title: '支数',
+      dataIndex: 'unit_count',
+    }
+  ];
+  
   
   return (
     <div className="Units screen">
-      <div className="screen-header">
-        <Button className="action-item" onClick={add}>添加</Button>
-      </div>
       <div className="screen-main">
-        <div className="table">
-          <div className="thead">
-            <div className="tr">
-              <div className="td">名称</div>
-              <div className="td">标金</div>
-              <div className="td">支数</div>
-            </div>
-          </div>
-          <div className="tbody">
-            {
-              items.map((r) => {
-                const unit = r;
-                return (
-                  <div className="tr" key={unit.id}>
-                    <div className="td">{unit.name}</div>
-                    <div className="td">{unit.budget.toString()}</div>
-                    <div className="td">{unit.unit_count.toString()}</div>
-                  </div>
-                )
-              })
-            }
-          </div>
+        <div className="screen-table-actions">
+          <Button className="action-item" onClick={add}>添加</Button>
         </div>
+        <Table className="screen-table" columns={columns} dataSource={items ?? {}} pagination={false} />
       </div>
     </div>
   )
