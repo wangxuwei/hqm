@@ -17,6 +17,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
   const handleSubmit = useCallback(() => {
     form.validateFields().then(async () => {
       const newUnit = { ...form.getFieldsValue() };
+
       if(!data?.id){
         await unitFmc.create(newUnit);
       }else{
@@ -60,8 +61,8 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
           name:data?.name ?? "", 
           is_lunar:data?.is_lunar ?? true, 
           day: data?.day ?? 1, 
-          plus_day: data?.plus_day ?? 1, 
           cycle: data?.cycle ?? 1, 
+          plus_day: data?.plus_day ?? 1, 
           plus_cycle: data?.plus_cycle ?? 1, 
           last_bidded_date: dayjs(data?.last_bidded_date) ?? "", 
           count:data?.count ?? 10, 

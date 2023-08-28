@@ -26,12 +26,16 @@ function Units(){
   // }, []);
 
   async function onAdd(){
-    unitModal.show({  });
+    unitModal.show({  }).then(() => {
+      refresh();
+    });
   }
 
   async function onEdit(id:string){
     const unit = await unitFmc.get(id);
-    unitModal.show({ unit });
+    unitModal.show({ unit }).then(() => {
+      refresh();
+    });
   }
 
   async function onDel(id:string){

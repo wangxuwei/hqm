@@ -138,11 +138,11 @@ impl From<UnitForCreate> for Value {
             ("unit_count".into(), val.unit_count.into()),
         ]);
 
-        if let Some(plus_day) = val.amount {
+        if let Some(plus_day) = val.plus_day {
             data.insert("plus_day".into(), plus_day.into());
         }
 
-        if let Some(plus_cycle) = val.amount {
+        if let Some(plus_cycle) = val.plus_cycle {
             data.insert("plus_cycle".into(), plus_cycle.into());
         }
 
