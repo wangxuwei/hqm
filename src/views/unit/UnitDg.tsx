@@ -1,6 +1,7 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import { DatePicker, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
+import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
@@ -10,20 +11,21 @@ import "./UnitDg.pcss";
 export default NiceModal.create(({ unit }: { unit?: Unit }) => {
   const modal = useModal();
   const [form] = Form.useForm();
-  const [plus, setPlus] = useState(false);
-  // const meta = {
-  //   initialValues: unit,
-  //   fields: [
-  //     { key: 'name', label: 'Name', required: true },
-  //     { key: 'job', label: 'Job Title', required: true },
-  //   ],
-  // };
+  const [plus, setPlus] = useState(unit?.plus_cycle! > 0);
+  const [data] = useState(unit);
 
   const handleSubmit = useCallback(() => {
     form.validateFields().then(async () => {
       const newUnit = { ...form.getFieldsValue() };
-      console.log(newUnit);
-      await unitFmc.create(newUnit);
+      if(!data?.id){
+        await unitFmc.create(newUnit);
+      }else{
+        if(!plus){
+          newUnit.plus_cycle = null;
+          newUnit.plus_day = null;
+        }
+        await unitFmc.update(data?.id!, newUnit);
+      }
       modal.resolve(newUnit);
       modal.hide();
     }).catch((e) => {console.log(e)});
@@ -54,8 +56,22 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
       <Form form={form}
         labelCol={{ span: 5 }}
         validateMessages={validateMessages}
-        initialValues={{is_lunar:true, day: 1, plus_day: 1, cycle:1, plus_cycle: 1, count:10, bidded_count: 0, unit_count: 1}}>
-        <Form.Item name="name" label="名称" rules={[{ required: true }]}>
+        initialValues={{
+          name:data?.name ?? "", 
+          is_lunar:data?.is_lunar ?? true, 
+          day: data?.day ?? 1, 
+          plus_day: data?.plus_day ?? 1, 
+          cycle: data?.cycle ?? 1, 
+          plus_cycle: data?.plus_cycle ?? 1, 
+          last_bidded_date: dayjs(data?.last_bidded_date) ?? "", 
+          count:data?.count ?? 10, 
+          unit_count: data?.unit_count ?? 1,
+          budget:data?.budget ?? "", 
+          bidded_count: data?.bidded_count ?? 1,
+          amount: data?.amount ?? "",
+          description: data?.description ?? ""
+        }}>
+        <Form.Item name="name" label="名称" rules={[{ required: true }]} >
           <Input />
         </Form.Item>
         <Form.Item name="is_lunar" label="类型" rules={[{ required: true }]}>
