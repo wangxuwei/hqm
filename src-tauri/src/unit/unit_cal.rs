@@ -244,14 +244,14 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                 DateInfo {
                     year: date_info.year,
                     month: date_info.month - plus_cycle as i8,
-                    day: plus_cycle as i8,
+                    day: plus_day as i8,
                     leap: None,
                 }
             } else {
                 DateInfo {
                     year: date_info.year,
                     month: date_info.month + plus_cycle as i8,
-                    day: plus_cycle as i8,
+                    day: plus_day as i8,
                     leap: None,
                 }
             };
@@ -318,7 +318,7 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
             // i 表示每次会
             let mut i = 1;
             while i <= need_count {
-                let next_date_info = DateInfo {
+                let next_date_info: DateInfo = DateInfo {
                     year: last_date_info.year,
                     month: last_date_info.month + dir * unit.cycle as i8,
                     day: unit.day as i8,
