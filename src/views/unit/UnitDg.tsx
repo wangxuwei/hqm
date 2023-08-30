@@ -140,7 +140,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
           <InputNumber min={1} max={5} />
         </Form.Item>
 
-        <Form.Item name="amount" label="预估会金额" rules={[{ required: true }]}>
+        <Form.Item name="amount" label="预估会金额">
           <InputNumber />
         </Form.Item>
 
