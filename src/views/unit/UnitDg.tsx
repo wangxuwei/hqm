@@ -22,8 +22,8 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
         await unitFmc.create(newUnit);
       }else{
         if(!plus){
-          newUnit.plus_cycle = null;
-          newUnit.plus_day = null;
+          newUnit.plus_cycle = 0;
+          newUnit.plus_day = 0;
         }
         await unitFmc.update(data?.id!, newUnit);
       }

@@ -213,10 +213,19 @@ impl From<UnitForUpdate> for Value {
             data.insert("cycle".into(), cycle.into());
         }
         if let Some(plus_day) = val.plus_day {
-            data.insert("plus_day".into(), plus_day.into());
+            // FIXME should be null set to db directly
+            if plus_day == 0 {
+                data.insert("plus_day".into(), Value::None);
+            } else {
+                data.insert("plus_day".into(), plus_day.into());
+            }
         }
         if let Some(plus_cycle) = val.plus_cycle {
-            data.insert("plus_cycle".into(), plus_cycle.into());
+            if plus_cycle == 0 {
+                data.insert("plus_cycle".into(), Value::None);
+            } else {
+                data.insert("plus_cycle".into(), plus_cycle.into());
+            }
         }
         if let Some(budget) = val.budget {
             data.insert("budget".into(), budget.into());
