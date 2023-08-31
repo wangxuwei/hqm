@@ -117,7 +117,7 @@ pub fn get_left_income(
         if left_count == 0 {
             continue;
         }
-        let amount = left_count * unit.amount.unwrap();
+        let amount = left_count as i64 * unit.amount.unwrap();
         total_income += amount;
 
         let mut number: i8 = -1;

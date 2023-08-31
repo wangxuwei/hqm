@@ -36,9 +36,9 @@ pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
         }
 
         units.push(UnitForCreate {
-            name: el["name"].to_string(),
+            name: el["name"].as_str().unwrap().to_string(),
             is_lunar: el["isLunar"].as_bool().unwrap(),
-            last_bidded_date: el["lastBiddedDate"].to_string(),
+            last_bidded_date: el["lastBiddedDate"].as_str().unwrap().to_string(),
             day: el["day"].as_i64().unwrap() as i16,
             cycle: el["cycle"].as_i64().unwrap() as i16,
             plus_day: el["plusDay"].as_i64().map(|v| v as i16),
@@ -47,8 +47,8 @@ pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
             count: el["count"].as_i64().unwrap() as i16,
             bidded_count: el["biddedCount"].as_i64().unwrap() as i16,
             unit_count: el["unitCount"].as_i64().unwrap() as i16,
-            amount: el["amount"].as_i64().map(|v| v as i16),
-            description: Some(el["description"].to_string()),
+            amount: el["amount"].as_i64(),
+            description: el["description"].as_str().map(|v| v.to_string()),
             unit_budgets: Some(unit_budgets),
         });
     }

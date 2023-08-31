@@ -49,7 +49,7 @@ pub struct Unit {
 
     // optional
     // 预估总额
-    pub amount: Option<i16>,
+    pub amount: Option<i64>,
     // 备注
     pub description: Option<String>,
 
@@ -115,7 +115,7 @@ pub struct UnitForCreate {
 
     // optional
     // 预估总额
-    pub amount: Option<i16>,
+    pub amount: Option<i64>,
     // 备注
     pub description: Option<String>,
 
@@ -189,7 +189,7 @@ pub struct UnitForUpdate {
     // 会支数
     pub unit_count: Option<i16>,
     // 预估总额
-    pub amount: Option<i16>,
+    pub amount: Option<i64>,
     // 备注
     pub description: Option<String>,
 }
