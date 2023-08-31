@@ -23,6 +23,12 @@
       "identifier": "com.friping.hqm",
       "targets": "all"
     },
+    "allowlist": {
+      "dialog": {
+        "open": true, 
+        "save": true
+      }
+    },
     "security": {
       "csp": null
     },

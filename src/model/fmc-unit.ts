@@ -18,6 +18,19 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     });
   }
 
+  async importUnits(path: string) {
+    console.log(123123123123);
+    return ipc_invoke(`import_units`, { path });
+  }
+
+  async exportUnits() {
+    return ipc_invoke(`export_units`, {});
+  }
+
+  async syncUnits() {
+    return ipc_invoke(`sync_units`, {});
+  }
+
   async getPaymentInPeriod(startDate?: string, endDate?: string): Promise<PaymentInfo> {
     return ipc_invoke(`get_payment_in_period`, { startDate, endDate }).then(res => {
       return res.data as unknown as PaymentInfo;

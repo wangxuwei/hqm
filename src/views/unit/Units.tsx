@@ -1,9 +1,11 @@
 import { useModal } from '@ebay/nice-modal-react';
+import { open } from '@tauri-apps/api/dialog';
 import { Button, Space, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import UnitDg from './UnitDg';
+
 import "./Units.pcss";
 
 
@@ -19,16 +21,30 @@ function Units(){
   }
 
   const unitModal = useModal(UnitDg);
-  // const onAdd = useCallback(() => {
-  //   unitModal.show({  }).then(() => {
-  //     refresh();
-  //   });
-  // }, []);
 
   async function onAdd(){
     unitModal.show({  }).then(() => {
       refresh();
     });
+  }
+
+  async function onPreImport(){
+    const selected = await open({
+      filters: [{
+        name: 'json',
+        extensions: ['json']
+      }]
+    });
+    if (selected && !Array.isArray(selected)) {
+      await unitFmc.importUnits(selected);
+      refresh();
+    }
+  }
+
+  async function onExport(){
+  }
+
+  async function onSync(){
   }
 
   async function onEdit(id:string){
@@ -80,6 +96,9 @@ function Units(){
       <div className="screen-main">
         <div className="screen-table-actions">
           <Button className="action-item" onClick={onAdd}>添加</Button>
+          <Button className="action-item" onClick={onPreImport}>导入</Button>
+          <Button className="action-item" onClick={onExport}>导出</Button>
+          <Button className="action-item" onClick={onSync}>同步</Button>
         </div>
         <Table className="screen-table" columns={columns} dataSource={data} pagination={false} />
       </div>

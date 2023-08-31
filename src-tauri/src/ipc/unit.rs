@@ -3,8 +3,12 @@
 
 use super::{CreateParams, DeleteParams, GetParams, IpcResponse, ListParams, UpdateParams};
 use crate::ctx::Ctx;
+use crate::ipc::service::{
+    export_units as do_export_units, import_units as do_import_units, sync_units as do_sync_units,
+};
 use crate::model::{ModelMutateResultData, Unit, UnitBmc, UnitForCreate, UnitForUpdate};
 use crate::Error;
+use serde::Deserialize;
 use serde_json::Value;
 use tauri::{command, AppHandle, Wry};
 
@@ -112,6 +116,44 @@ pub async fn get_interest_in_period(
             Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
             Err(err) => Err(Error::JsonSerde(err)).into(),
         },
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[derive(Deserialize)]
+pub struct ImportPath {
+    path: String,
+}
+
+#[command]
+pub async fn import_units(app: AppHandle<Wry>, params: ImportPath) -> IpcResponse<bool> {
+    match Ctx::from_app(app) {
+        Ok(ctx) => {
+            do_import_units(ctx, &params.path).await;
+            IpcResponse::from(Ok(true))
+        }
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
+pub async fn export_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+    match Ctx::from_app(app) {
+        Ok(_) => {
+            do_export_units().await;
+            IpcResponse::from(Ok(true))
+        }
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
+pub async fn sync_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+    match Ctx::from_app(app) {
+        Ok(_) => {
+            do_sync_units().await;
+            IpcResponse::from(Ok(true))
+        }
         Err(_) => Err(Error::CtxFail).into(),
     }
 }
