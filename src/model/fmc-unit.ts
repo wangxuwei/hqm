@@ -19,12 +19,11 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
   }
 
   async importUnits(path: string) {
-    console.log(123123123123);
     return ipc_invoke(`import_units`, { path });
   }
 
-  async exportUnits() {
-    return ipc_invoke(`export_units`, {});
+  async exportUnits(path: string) {
+    return ipc_invoke(`export_units`, { path });
   }
 
   async syncUnits() {

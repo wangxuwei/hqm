@@ -121,12 +121,12 @@ pub async fn get_interest_in_period(
 }
 
 #[derive(Deserialize)]
-pub struct ImportPath {
+pub struct FilePath {
     path: String,
 }
 
 #[command]
-pub async fn import_units(app: AppHandle<Wry>, params: ImportPath) -> IpcResponse<bool> {
+pub async fn import_units(app: AppHandle<Wry>, params: FilePath) -> IpcResponse<bool> {
     match Ctx::from_app(app) {
         Ok(ctx) => {
             do_import_units(ctx, &params.path).await;
@@ -137,10 +137,10 @@ pub async fn import_units(app: AppHandle<Wry>, params: ImportPath) -> IpcRespons
 }
 
 #[command]
-pub async fn export_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+pub async fn export_units(app: AppHandle<Wry>, params: FilePath) -> IpcResponse<bool> {
     match Ctx::from_app(app) {
-        Ok(_) => {
-            do_export_units().await;
+        Ok(ctx) => {
+            do_export_units(ctx, &params.path).await;
             IpcResponse::from(Ok(true))
         }
         Err(_) => Err(Error::CtxFail).into(),

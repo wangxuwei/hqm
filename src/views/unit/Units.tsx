@@ -1,5 +1,5 @@
 import { useModal } from '@ebay/nice-modal-react';
-import { open } from '@tauri-apps/api/dialog';
+import { open, save } from '@tauri-apps/api/dialog';
 import { Button, Space, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
@@ -42,6 +42,18 @@ function Units(){
   }
 
   async function onExport(){
+    const suggestedFilename = "image.png";
+  
+    // Save into the default downloads directory, like in the browser
+    const filePath = await save({
+      filters: [{
+          name:"json", 
+          extensions: ["json"]
+      }]
+    });
+    if (filePath && !Array.isArray(filePath)) {
+      await unitFmc.exportUnits(filePath);
+    }
   }
 
   async function onSync(){
