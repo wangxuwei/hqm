@@ -5,7 +5,7 @@ use super::{CreateParams, DeleteParams, GetParams, IpcResponse, ListParams, Upda
 use crate::ctx::Ctx;
 use crate::ipc::service::{
     backup_units as do_backup_units, export_units as do_export_units,
-    import_units as do_import_units,
+    import_units as do_import_units, restore_units as do_restore_units,
 };
 use crate::model::{ModelMutateResultData, Unit, UnitBmc, UnitForCreate, UnitForUpdate};
 use crate::Error;
@@ -153,6 +153,17 @@ pub async fn backup_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> Ip
     match Ctx::from_app(app) {
         Ok(ctx) => {
             do_backup_units(ctx).await;
+            IpcResponse::from(Ok(true))
+        }
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
+pub async fn restore_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+    match Ctx::from_app(app) {
+        Ok(ctx) => {
+            do_restore_units(ctx).await;
             IpcResponse::from(Ok(true))
         }
         Err(_) => Err(Error::CtxFail).into(),

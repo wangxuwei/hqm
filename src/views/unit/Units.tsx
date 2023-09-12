@@ -71,6 +71,22 @@ function Units(){
     });
   }
 
+  async function onRestore(){
+    // FIXME: to a config file, and make to common valid
+    const webview = new WebviewWindow('oauth_login', {
+      url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
+    });
+
+    webview.once("SEND_OAUTH_TOKEN", (data) => {
+      webview.close();
+      unitFmc.restoreUnits();
+    });
+
+    await webview.listen('tauri://window-created', async function () {
+      await webview.show();
+    });
+  }
+
   async function onEdit(id:string){
     const unit = await unitFmc.get(id);
     unitModal.show({ unit }).then(() => {
@@ -123,6 +139,7 @@ function Units(){
           <Button className="action-item" onClick={onPreImport}>导入</Button>
           <Button className="action-item" onClick={onExport}>导出</Button>
           <Button className="action-item" onClick={onBackup}>备份</Button>
+          <Button className="action-item" onClick={onRestore}>恢复</Button>
         </div>
         <Table className="screen-table" columns={columns} dataSource={data} pagination={false} />
       </div>

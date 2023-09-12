@@ -30,6 +30,10 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     return ipc_invoke(`backup_units`, {});
   }
 
+  async restoreUnits() {
+    return ipc_invoke(`restore_units`, {});
+  }
+
   async getPaymentInPeriod(startDate?: string, endDate?: string): Promise<PaymentInfo> {
     return ipc_invoke(`get_payment_in_period`, { startDate, endDate }).then(res => {
       return res.data as unknown as PaymentInfo;

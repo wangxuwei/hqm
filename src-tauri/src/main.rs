@@ -46,6 +46,7 @@ async fn main() -> Result<()> {
             ipc::import_units,
             ipc::export_units,
             ipc::backup_units,
+            ipc::restore_units,
             ipc::get_payment_in_period,
             ipc::get_valid_left_income,
             ipc::get_due_date_units_in_peroid,

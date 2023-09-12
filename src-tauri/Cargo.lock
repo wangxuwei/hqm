@@ -1625,6 +1625,7 @@ dependencies = [
  "tauri-build",
  "tokio",
  "ts-rs",
+ "urlencoding",
 ]
 
 [[package]]
