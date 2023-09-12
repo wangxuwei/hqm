@@ -26,16 +26,19 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    thread::spawn(|| {
-        // start web server
-        start_server();
-    });
-
     let model_manager = ModelStore::new().await?;
     let model_manager = Arc::new(model_manager);
 
     tauri::Builder::default()
         .manage(model_manager)
+        .setup(|app: &mut tauri::App| {
+            let dist_dir = app.config().build.dist_dir.to_string().clone();
+            thread::spawn(move || {
+                // start web server
+                start_server(dist_dir.as_str());
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             // Unit
             ipc::get_unit,
@@ -62,6 +65,5 @@ async fn main() -> Result<()> {
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
     Ok(())
 }

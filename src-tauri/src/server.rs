@@ -1,23 +1,21 @@
 use std::{
-    env, fs,
+    fs,
     io::prelude::*,
     net::{TcpListener, TcpStream},
     path::Path,
 };
 
-pub fn start_server() {
+pub fn start_server(dist_dir: &str) {
     // FIXME conf
     let listener = TcpListener::bind("127.0.0.1:6128").unwrap();
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        handle_connection(stream);
+        handle_connection(stream, dist_dir);
     }
 }
 
-fn handle_connection(mut stream: TcpStream) {
+fn handle_connection(mut stream: TcpStream, base_path: &str) {
     let status_line = "HTTP/1.1 200 OK";
-    let base_path = "../dist";
-    // FIXME path
 
     let mut buffer = [0; 4048];
     if let Err(io_err) = stream.read(&mut buffer) {
