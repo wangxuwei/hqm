@@ -1,0 +1,10 @@
+{
+	"rust-analyzer.checkOnSave": true,
+	"rust-analyzer.check.targets": null,
+	"editor.codeActionsOnSave": {},
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"rust-analyzer.linkedProjects": [
+		"./src-tauri/Cargo.toml"
+	],
+	"rust-analyzer.showUnlinkedFileNotification": false
+}
