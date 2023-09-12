@@ -21,6 +21,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Tauri Development Debug",
+      "cwd": "${workspaceFolder}/src-tauri",
       "cargo": {
         "args": [
           "build",
@@ -35,6 +36,7 @@
       "type": "lldb",
       "request": "launch",
       "name": "Tauri Production Debug",
+      "cwd": "${workspaceFolder}/src-tauri",
       "cargo": {
         "args": ["build", "--release", "--manifest-path=./src-tauri/Cargo.toml"]
       },

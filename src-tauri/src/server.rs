@@ -16,7 +16,7 @@ pub fn start_server() {
 
 fn handle_connection(mut stream: TcpStream) {
     let status_line = "HTTP/1.1 200 OK";
-    let base_path = "./dist";
+    let base_path = "../dist";
     // FIXME path
 
     let mut buffer = [0; 4048];
