@@ -9,8 +9,9 @@
 pub use error::{Error, Result};
 
 // -- Imports
+use crate::server::start_server;
 use model::ModelStore;
-use std::sync::Arc;
+use std::{env, sync::Arc, thread};
 
 // -- Sub-Modules
 mod ctx;
@@ -19,11 +20,17 @@ mod event;
 mod ipc;
 mod model;
 mod prelude;
+mod server;
 mod unit;
 mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    thread::spawn(|| {
+        // start web server
+        start_server();
+    });
+
     let model_manager = ModelStore::new().await?;
     let model_manager = Arc::new(model_manager);
 
@@ -38,7 +45,7 @@ async fn main() -> Result<()> {
             ipc::list_units,
             ipc::import_units,
             ipc::export_units,
-            ipc::sync_units,
+            ipc::backup_units,
             ipc::get_payment_in_period,
             ipc::get_valid_left_income,
             ipc::get_due_date_units_in_peroid,
@@ -48,7 +55,9 @@ async fn main() -> Result<()> {
             ipc::create_unit_budget,
             ipc::update_unit_budget,
             ipc::delete_unit_budget,
-            ipc::list_unit_budgets
+            ipc::list_unit_budgets,
+            // oauth
+            ipc::store_access_token
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

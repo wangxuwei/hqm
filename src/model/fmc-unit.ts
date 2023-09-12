@@ -26,8 +26,8 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     return ipc_invoke(`export_units`, { path });
   }
 
-  async syncUnits() {
-    return ipc_invoke(`sync_units`, {});
+  async backupUnits() {
+    return ipc_invoke(`backup_units`, {});
   }
 
   async getPaymentInPeriod(startDate?: string, endDate?: string): Promise<PaymentInfo> {

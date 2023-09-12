@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react";
+import { resolve } from 'path';
 import postcssImport from "postcss-import";
 import postcssMixins from 'postcss-mixins';
 import postcssNested from 'postcss-nested';
@@ -42,5 +43,11 @@ export default defineConfig(async () => ({
     minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, './index.html'),
+        oauth: resolve(__dirname, './oauth.html'),
+      }
+    }
   },
 }));

@@ -11,6 +11,7 @@
 //! Notes:
 //!   - This module re-exports the appropriate sub-module constructs as their hierarchy is irrelevant to callers.
 
+mod oauth_acesss;
 mod params;
 mod response;
 mod service;
@@ -18,6 +19,7 @@ mod unit;
 mod unit_budget;
 
 // --- re-exports
+pub use oauth_acesss::*;
 pub use params::*;
 pub use response::*;
 pub use unit::*;

@@ -4,7 +4,7 @@ import { BaseFmc } from './fmc-base.js';
 // #region    --- UnitBudgetFmc
 class UnitBudgetFmc extends BaseFmc<UnitBudget, UnitBudgetForCreate, UnitBudgetForUpdate> {
   constructor() {
-    super("UnitBudget");
+    super("unit_budget");
   }
 
 }

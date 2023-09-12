@@ -4,7 +4,8 @@
 use super::{CreateParams, DeleteParams, GetParams, IpcResponse, ListParams, UpdateParams};
 use crate::ctx::Ctx;
 use crate::ipc::service::{
-    export_units as do_export_units, import_units as do_import_units, sync_units as do_sync_units,
+    backup_units as do_backup_units, export_units as do_export_units,
+    import_units as do_import_units,
 };
 use crate::model::{ModelMutateResultData, Unit, UnitBmc, UnitForCreate, UnitForUpdate};
 use crate::Error;
@@ -148,10 +149,10 @@ pub async fn export_units(app: AppHandle<Wry>, params: FilePath) -> IpcResponse<
 }
 
 #[command]
-pub async fn sync_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+pub async fn backup_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
     match Ctx::from_app(app) {
-        Ok(_) => {
-            do_sync_units().await;
+        Ok(ctx) => {
+            do_backup_units(ctx).await;
             IpcResponse::from(Ok(true))
         }
         Err(_) => Err(Error::CtxFail).into(),

@@ -1,10 +1,14 @@
 use crate::{
     ctx::Ctx,
-    model::{Unit, UnitBmc, UnitBudgetForCreate, UnitForCreate},
+    model::{OAuthAccessBmc, Unit, UnitBmc, UnitBudgetForCreate, UnitForCreate},
 };
-use serde::de::IntoDeserializer;
-use serde_json::{map::Values, Map, Value};
-use std::{fs, sync::Arc};
+use chrono::{Local, NaiveDateTime};
+use reqwest::{
+    multipart::{Form, Part},
+    Client,
+};
+use serde_json::{Map, Value};
+use std::{borrow::Cow, fs, sync::Arc};
 
 pub async fn import_units(ctx: Arc<Ctx>, path: &String) {
     let contents = fs::read_to_string(path).unwrap();
@@ -22,7 +26,41 @@ pub async fn export_units(ctx: Arc<Ctx>, path: &String) {
     fs::write(path, json_str).unwrap();
 }
 
-pub async fn sync_units() {}
+pub async fn backup_units(ctx: Arc<Ctx>) {
+    let access_token = OAuthAccessBmc::get_token(ctx.clone()).await;
+    if let Ok(token) = access_token {
+        // check valid token
+        let now = Local::now().naive_local();
+        let exipre_date =
+            NaiveDateTime::parse_from_str(&token.exipre_date, "%Y-%m-%dT%H:%M:%S.%fZ").unwrap();
+        if now < exipre_date {
+            let filename = format!("units_{}.json", now.format("%Y-%m-%d-%H-%M-%S"));
+            let units = UnitBmc::list(ctx.clone(), None).await.unwrap();
+            let json_obj = convert_units(&units);
+            let json_str = serde_json::to_string_pretty(&json_obj).unwrap();
+            // do sync
+            let file_byte = json_str.as_bytes().to_vec();
+            // 一定要有file_name方法，且参数不能为空，否则数据上传失败
+            let part = Part::bytes(Cow::from(file_byte)).file_name(filename.clone());
+            let form = Form::new().part("file", part);
+            println!(
+                    "https://d.pcs.baidu.com/rest/2.0/pcs/file?method=upload&access_token={}&ondup=overwrite&path=/hqm/bak",
+                    token.access_token
+                );
+            Client::new()
+                .post(format!(
+                    "https://d.pcs.baidu.com/rest/2.0/pcs/file?method=upload&access_token={}&ondup=overwrite&path=/apps/工具管理/{}",
+                    token.access_token,
+                    filename
+                ))
+                .multipart(form)
+                .send()
+                // FIXME, baidu http(一般也不会panic)错误返回好像没有panic！，是否处理, 错误吗“31064”-上传路径权限
+                .await
+                .unwrap();
+        }
+    }
+}
 
 pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
     let obj_json_array: Value = serde_json::from_str(raw_json).unwrap();

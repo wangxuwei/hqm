@@ -13,12 +13,14 @@ use ts_rs::TS;
 
 mod bmc_base;
 mod model_store;
+mod oauth_access;
 mod store;
 mod unit;
 mod unit_budget;
 
 // --- Re-exports
 pub use model_store::*;
+pub use oauth_access::*;
 pub use unit::*;
 pub use unit_budget::*;
 

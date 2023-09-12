@@ -27,10 +27,23 @@
       "dialog": {
         "open": true, 
         "save": true
+      },
+      "window": {
+        "create": true,
+        "close": true,
+        "center": true,
+        "show": true
       }
     },
     "security": {
-      "csp": null
+      "csp": null,
+      "dangerousRemoteDomainIpcAccess": [
+        {
+          "windows": ["oauth_login"],
+          "domain": "localhost",
+          "enableTauriAPI": true
+        }
+      ]
     },
     "windows": [
       {
