@@ -43,10 +43,18 @@ export default defineConfig(async () => ({
     minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
     // produce sourcemaps for debug builds
     sourcemap: !!process.env.TAURI_DEBUG,
+    chunkSizeWarningLimit: 2000,
     rollupOptions: {
+      onwarn: (warning, warn) => {
+        if (warning.code === 'MODULE_LEVEL_DIRECTIVE') {
+          return;
+        }
+        warn(warning)
+      },
       input: {
         index: resolve(__dirname, './index.html'),
         oauth: resolve(__dirname, './oauth.html'),
+
       }
     }
   },
