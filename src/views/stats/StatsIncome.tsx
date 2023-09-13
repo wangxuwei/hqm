@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import "./StatsIncome.pcss";
@@ -16,7 +16,9 @@ export default function StatsIncome() {
     });
   }
 
-  refresh();
+  useEffect(() => {
+    refresh();
+  }, [setItems]);
 
   return (
     <div className="StatsIncome section">

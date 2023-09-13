@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import { formatDate, formatToLunar, mom, now } from '../../ts/utils-date';
@@ -23,10 +23,14 @@ export default function StatsPayment(){
   const [pickers, setShowPicker] = useState([false,false]);
 
   function refresh(){
-    unitFmc.getPaymentInPeriod(startDate.toISOString(), endDate.toISOString()).then((result) => {
+    unitFmc.getPaymentInPeriod(startDate.toISOString(true), endDate.toISOString(true)).then((result) => {
       setItems(result.unit_snapshots);
       setTotal(result.total_payment);
     });
+  }
+
+  function onSearch(){
+    refresh();
   }
 
   function onDateSelect(value:Moment, name:string){
@@ -47,7 +51,9 @@ export default function StatsPayment(){
     setShowPicker(arr);
   }
 
-  refresh();
+  useEffect(() => {
+    refresh();
+  }, [setItems]);
   return (
     <div className="StatsPayment section">
       <div className="section-filter">
@@ -66,7 +72,7 @@ export default function StatsPayment(){
           </div>
         </div>
         <div className="filter-item">
-          <button className="search">查询</button>
+          <button className="search" onClick={onSearch}>查询</button>
         </div>
       </div>
       <div className="section-results">

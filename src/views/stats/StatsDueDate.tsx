@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import { formatDate, mom, now } from '../../ts/utils-date';
@@ -37,7 +37,9 @@ export default function StatsDueDate() {
     setShowPicker(arr);
   }
 
-  refresh();
+  useEffect(() => {
+    refresh();
+  }, [setItems]);
 
   return (
     <div className="StatsDueDate section">
