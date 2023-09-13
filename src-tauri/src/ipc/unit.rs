@@ -8,10 +8,21 @@ use crate::ipc::service::{
     import_units as do_import_units, restore_units as do_restore_units,
 };
 use crate::model::{ModelMutateResultData, Unit, UnitBmc, UnitForCreate, UnitForUpdate};
+use crate::unit::unit_stats::{
+    get_due_date_unit, get_interest, get_left_income, get_payment, DueDateInfo, InterestInfo,
+    LeftIncomeInfo, PaymentInfo,
+};
 use crate::Error;
+use chrono::NaiveDateTime;
 use serde::Deserialize;
 use serde_json::Value;
 use tauri::{command, AppHandle, Wry};
+
+#[derive(Deserialize)]
+pub struct DateParams {
+    start_date: Option<String>,
+    end_date: Option<String>,
+}
 
 #[command]
 pub async fn get_unit(app: AppHandle<Wry>, params: GetParams) -> IpcResponse<Unit> {
@@ -68,13 +79,24 @@ pub async fn list_units(app: AppHandle<Wry>, params: ListParams<Value>) -> IpcRe
 #[command]
 pub async fn get_payment_in_period(
     app: AppHandle<Wry>,
-    params: ListParams<Value>,
-) -> IpcResponse<Vec<Unit>> {
+    params: DateParams,
+) -> IpcResponse<PaymentInfo> {
     match Ctx::from_app(app) {
-        Ok(ctx) => match params.filter.map(serde_json::from_value).transpose() {
-            Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
-            Err(err) => Err(Error::JsonSerde(err)).into(),
-        },
+        Ok(ctx) => {
+            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let start_date = params.start_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let end_date = params.end_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let ret = get_payment(&units, start_date, end_date);
+            Ok(ret).into()
+        }
         Err(_) => Err(Error::CtxFail).into(),
     }
 }
@@ -82,13 +104,24 @@ pub async fn get_payment_in_period(
 #[command]
 pub async fn get_valid_left_income(
     app: AppHandle<Wry>,
-    params: ListParams<Value>,
-) -> IpcResponse<Vec<Unit>> {
+    params: DateParams,
+) -> IpcResponse<LeftIncomeInfo> {
     match Ctx::from_app(app) {
-        Ok(ctx) => match params.filter.map(serde_json::from_value).transpose() {
-            Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
-            Err(err) => Err(Error::JsonSerde(err)).into(),
-        },
+        Ok(ctx) => {
+            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let start_date = params.start_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let end_date = params.end_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let ret = get_left_income(&units, start_date, end_date);
+            Ok(ret).into()
+        }
         Err(_) => Err(Error::CtxFail).into(),
     }
 }
@@ -96,13 +129,24 @@ pub async fn get_valid_left_income(
 #[command]
 pub async fn get_due_date_units_in_peroid(
     app: AppHandle<Wry>,
-    params: ListParams<Value>,
-) -> IpcResponse<Vec<Unit>> {
+    params: DateParams,
+) -> IpcResponse<DueDateInfo> {
     match Ctx::from_app(app) {
-        Ok(ctx) => match params.filter.map(serde_json::from_value).transpose() {
-            Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
-            Err(err) => Err(Error::JsonSerde(err)).into(),
-        },
+        Ok(ctx) => {
+            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let start_date = params.start_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let end_date = params.end_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let ret = get_due_date_unit(&units, start_date, end_date);
+            Ok(ret).into()
+        }
         Err(_) => Err(Error::CtxFail).into(),
     }
 }
@@ -110,13 +154,24 @@ pub async fn get_due_date_units_in_peroid(
 #[command]
 pub async fn get_interest_in_period(
     app: AppHandle<Wry>,
-    params: ListParams<Value>,
-) -> IpcResponse<Vec<Unit>> {
+    params: DateParams,
+) -> IpcResponse<InterestInfo> {
     match Ctx::from_app(app) {
-        Ok(ctx) => match params.filter.map(serde_json::from_value).transpose() {
-            Ok(filter) => UnitBmc::list(ctx, filter).await.into(),
-            Err(err) => Err(Error::JsonSerde(err)).into(),
-        },
+        Ok(ctx) => {
+            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let start_date = params.start_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let end_date = params.end_date.map(|s| {
+                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
+                    .unwrap()
+                    .date()
+            });
+            let ret = get_interest(&units, start_date, end_date);
+            Ok(ret).into()
+        }
         Err(_) => Err(Error::CtxFail).into(),
     }
 }

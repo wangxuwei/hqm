@@ -13,13 +13,13 @@ use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use surrealdb::sql::{Data, Object, Value};
+use surrealdb::sql::{Object, Value};
 use ts_rs::TS;
 
 // region:    --- UnitBudget
 
 #[skip_serializing_none]
-#[derive(Serialize, TS, Debug, Clone)]
+#[derive(Serialize, TS, Debug, Clone, Deserialize)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct UnitBudget {
     pub id: String,

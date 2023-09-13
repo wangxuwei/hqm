@@ -18,7 +18,7 @@ use ts_rs::TS;
 // region:    --- Unit
 
 #[skip_serializing_none]
-#[derive(Serialize, TS, Debug, Clone)]
+#[derive(Serialize, TS, Debug, Clone, Deserialize)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct Unit {
     // persistent

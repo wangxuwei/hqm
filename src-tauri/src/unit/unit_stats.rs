@@ -2,7 +2,7 @@ use std::cmp::Ordering;
 
 use crate::{model::Unit, unit::unit_cal::get_unit_times};
 use chrono::{Local, NaiveDate};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
 use ts_rs::TS;
 
@@ -198,7 +198,7 @@ pub fn get_due_date_unit(
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, TS, Debug)]
+#[derive(Serialize, TS, Debug, Deserialize)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct InterestSnapShot {
     unit: Unit,
@@ -210,7 +210,7 @@ pub struct InterestSnapShot {
 }
 
 #[skip_serializing_none]
-#[derive(Serialize, TS, Debug)]
+#[derive(Serialize, TS, Debug, Deserialize)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct InterestInfo {
     total_interests: f32,
@@ -218,13 +218,13 @@ pub struct InterestInfo {
 }
 
 pub fn get_interest(
-    units: Vec<Unit>,
+    units: &Vec<Unit>,
     start_date: Option<NaiveDate>,
     end_date: Option<NaiveDate>,
 ) -> InterestInfo {
     let mut unit_snapshots: Vec<InterestSnapShot> = Vec::new();
     let mut total_interests: f32 = 0.0;
-    for unit in &units {
+    for unit in units {
         let unit_budgets = get_unit_budgets(unit, start_date, end_date);
         let self_budgets = get_self_budgets(unit);
         for unit_budget in unit_budgets {
