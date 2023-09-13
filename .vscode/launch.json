@@ -22,6 +22,9 @@
       "request": "launch",
       "name": "Tauri Development Debug",
       "cwd": "${workspaceFolder}/src-tauri",
+      "env": {
+        "RUST_BACKTRACE":"1"
+      },
       "cargo": {
         "args": [
           "build",

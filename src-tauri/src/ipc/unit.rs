@@ -16,6 +16,7 @@ use crate::Error;
 use chrono::NaiveDateTime;
 use serde::Deserialize;
 use serde_json::Value;
+use std::str::FromStr;
 use tauri::{command, AppHandle, Wry};
 
 #[derive(Deserialize)]
@@ -84,16 +85,12 @@ pub async fn get_payment_in_period(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params.start_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
-            let end_date = params.end_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
+            let start_date = params
+                .start_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let end_date = params
+                .end_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
             let ret = get_payment(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -109,16 +106,12 @@ pub async fn get_valid_left_income(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params.start_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
-            let end_date = params.end_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
+            let start_date = params
+                .start_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let end_date = params
+                .end_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
             let ret = get_left_income(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -134,16 +127,12 @@ pub async fn get_due_date_units_in_peroid(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params.start_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
-            let end_date = params.end_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
+            let start_date = params
+                .start_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let end_date = params
+                .end_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
             let ret = get_due_date_unit(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -159,16 +148,12 @@ pub async fn get_interest_in_period(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params.start_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
-            let end_date = params.end_date.map(|s| {
-                NaiveDateTime::parse_from_str(s.as_str(), "%Y-%m-%dT%H:%M:%S.%fZ")
-                    .unwrap()
-                    .date()
-            });
+            let start_date = params
+                .start_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let end_date = params
+                .end_date
+                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
             let ret = get_interest(&units, start_date, end_date);
             Ok(ret).into()
         }

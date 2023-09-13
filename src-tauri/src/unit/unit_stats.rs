@@ -1,6 +1,9 @@
 use std::cmp::Ordering;
 
-use crate::{model::Unit, unit::unit_cal::get_unit_times};
+use crate::{
+    model::Unit,
+    unit::{unit_cal::get_unit_times, DATE_FORMAT},
+};
 use chrono::{Local, NaiveDate};
 use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
@@ -32,7 +35,7 @@ pub fn get_payment(
     end_date: Option<NaiveDate>,
 ) -> PaymentInfo {
     let mut unit_snapshots = Vec::<PaymentSnapShot>::new();
-    let mut total_payment = 0;
+    let mut total_payment: i64 = 0;
     for unit in units {
         let unit_times = get_unit_times(unit, start_date, end_date);
         let self_budgets = get_self_budgets(unit);
@@ -47,16 +50,22 @@ pub fn get_payment(
 
             for self_budget in &self_budgets {
                 let date =
-                    NaiveDate::parse_from_str(&self_budget.budget_date, "%Y-%m-%dT%H:%M:%SZ")
-                        .unwrap();
+                    NaiveDate::parse_from_str(&self_budget.budget_date, DATE_FORMAT).unwrap();
                 if cmp_unit_time(&unit_time, &date) == Ordering::Greater {
                     payment += self_budget.budget;
                 }
             }
-            total_payment += payment;
+            total_payment += payment as i64;
+            // FIXME is there any simple way for NaiveDate to string?
             unit_snapshots.push(PaymentSnapShot {
                 unit: unit.clone(),
-                date: unit_time.date.format("%Y-%m-%dT%H:%M:%S.%3fZ").to_string(),
+                date: unit_time
+                    .date
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap()
+                    .and_local_timezone(Local::now().timezone())
+                    .unwrap()
+                    .to_rfc3339_opts(chrono::SecondsFormat::Millis, false),
                 payment: payment as f32,
                 number: unit_time.num as i8,
             });
@@ -134,11 +143,17 @@ pub fn get_left_income(
             unit: unit.clone(),
             first_date: unit_times[0]
                 .date
-                .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                .to_string(),
+                .and_hms_opt(0, 0, 0)
+                .unwrap()
+                .and_local_timezone(Local::now().timezone())
+                .unwrap()
+                .to_rfc3339_opts(chrono::SecondsFormat::Millis, false),
             last_budget_date: last_budget_date
-                .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                .to_string(),
+                .and_hms_opt(0, 0, 0)
+                .unwrap()
+                .and_local_timezone(Local::now().timezone())
+                .unwrap()
+                .to_rfc3339_opts(chrono::SecondsFormat::Millis, false),
             amount: amount as f32,
             number,
         });
@@ -189,8 +204,11 @@ pub fn get_due_date_unit(
         unit_snapshots.push(DueDateSnapShot {
             unit: unit.clone(),
             last_budget_date: last_budget_date
-                .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                .to_string(),
+                .and_hms_opt(0, 0, 0)
+                .unwrap()
+                .and_local_timezone(Local::now().timezone())
+                .unwrap()
+                .to_rfc3339_opts(chrono::SecondsFormat::Millis, false),
         });
     }
 
@@ -242,8 +260,7 @@ pub fn get_interest(
             for i in 0..self_budgets.len() {
                 let self_budget = &self_budgets[i];
                 let date =
-                    NaiveDate::parse_from_str(&self_budget.budget_date, "%Y-%m-%dT%H:%M:%SZ")
-                        .unwrap();
+                    NaiveDate::parse_from_str(&self_budget.budget_date, DATE_FORMAT).unwrap();
                 if cmp_unit_time(&unit_budget, &date) != Ordering::Less {
                     interests_arr[i] = Some(self_budget.budget as f32 * -1_f32);
                 }
@@ -270,8 +287,11 @@ pub fn get_interest(
                 unit: unit.clone(),
                 date: unit_budget
                     .date
-                    .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                    .to_string(),
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap()
+                    .and_local_timezone(Local::now().timezone())
+                    .unwrap()
+                    .to_rfc3339_opts(chrono::SecondsFormat::Millis, false),
                 number: unit_budget.num,
                 budget: unit_budget.budget.unwrap(),
                 current_interest: interest,

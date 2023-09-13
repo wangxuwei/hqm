@@ -22,7 +22,7 @@ pub struct LeapMonth {
  */
 
 pub fn lunar2solar(lunar_date: Lunar) -> NaiveDate {
-    // let lunar_date = verifyLunarDate(lunar_date);
+    let lunar_date = verify_lunar_date(&lunar_date);
     let lunisolar_date = LunisolarDate::from_ymd(
         lunar_date.year as u16,
         lunar_date.month as u8,
@@ -109,10 +109,10 @@ pub fn lunar_month_add(lunar_date: Lunar, num: i8) -> Lunar {
     verify_lunar_date(&current_lunar)
 }
 
-pub fn leap_count(lunar1: Lunar, lunar2: Lunar) -> usize {
-    let months = leap_months(lunar1, lunar2);
-    months.len()
-}
+// pub fn leap_count(lunar1: Lunar, lunar2: Lunar) -> usize {
+//     let months = leap_months(lunar1, lunar2);
+//     months.len()
+// }
 
 pub fn leap_months(lunar1: Lunar, lunar2: Lunar) -> Vec<LeapMonth> {
     let m1 = lunar2solar(lunar1);

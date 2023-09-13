@@ -2,7 +2,10 @@ use std::cmp::Ordering;
 
 use chrono::{Datelike, NaiveDate};
 
-use crate::model::{Unit, UnitBudget};
+use crate::{
+    model::{Unit, UnitBudget},
+    unit::DATE_FORMAT,
+};
 
 use super::utils_lunar::{leap_months, lunar2solar, solar2lunar, Lunar};
 
@@ -15,6 +18,7 @@ pub struct UnitTime {
 }
 
 // 标会的最小间隔时间，有可能是无效的
+#[derive(Clone)]
 struct DateInfo {
     year: i16,
     month: i8,
@@ -40,7 +44,7 @@ impl From<&DateInfo> for Lunar {
             year: date_info.year,
             month: date_info.month,
             day: date_info.day,
-            leap: date_info.leap.unwrap(),
+            leap: date_info.leap.unwrap_or(false),
         }
     }
 }
@@ -92,20 +96,21 @@ pub fn get_unit_times(
     let mut unit_times: Vec<UnitTime> = Vec::new();
     for (i, m) in dates.iter().enumerate() {
         let mut pass = true;
+        let v = *m;
         if let Some(s_date) = start_date {
-            if s_date > *m {
+            if s_date > v {
                 pass = false;
             }
         }
         if let Some(e_date) = end_date {
-            if e_date < *m {
+            if e_date < v {
                 pass = false;
             }
         }
 
         if pass {
             unit_times.push(UnitTime {
-                date: *m,
+                date: v,
                 num: (i + 1) as u8,
                 budget: None,
                 last_budget: None,
@@ -155,7 +160,7 @@ pub fn get_unit_budgets(
 }
 
 pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
-    let date = NaiveDate::parse_from_str(&unit.last_bidded_date, "%Y-%m-%dT%H:%M:%SZ").unwrap();
+    let date = NaiveDate::parse_from_str(&unit.last_bidded_date, DATE_FORMAT).unwrap();
 
     // 更新记录时间如果不存在，直接用bidDate, 但是biddedCount要是1
     let prev_dates = next_all_dates(unit, false);
@@ -183,7 +188,7 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
         let mut num: isize = -1;
         let v = match mark_bugdet {
             Some(v) => {
-                let date = NaiveDate::parse_from_str(&v.budget_date, "%Y-%m-%dT%H:%M:%SZ").unwrap();
+                let date = NaiveDate::parse_from_str(&v.budget_date, DATE_FORMAT).unwrap();
                 num = num_by_date_time(unit, &date);
                 Some(v.budget as f32)
             }
@@ -220,7 +225,7 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
 fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
     let mut next_dates: Vec<NaiveDate> = Vec::new();
     let date_str = unit.last_bidded_date.clone();
-    let date = NaiveDate::parse_from_str(&date_str, "%Y-%m-%dT%H:%M:%SZ").unwrap();
+    let date = NaiveDate::parse_from_str(&date_str, DATE_FORMAT).unwrap();
     let date_info = to_date_info(date, unit.is_lunar);
     // 要计算会的支数
     let need_count = if next {
@@ -383,6 +388,24 @@ fn back_to_local_date(date_info: &DateInfo, is_lunar: bool) -> NaiveDate {
     if is_lunar {
         lunar2solar(Lunar::from(date_info))
     } else {
-        NaiveDate::from(date_info)
+        let d = verify_date(date_info);
+        NaiveDate::from(&d)
     }
+}
+
+fn verify_date(date: &DateInfo) -> DateInfo {
+    let mut n_date = date.clone();
+    if n_date.month <= 0 {
+        let delta = 1 - n_date.month;
+        n_date.year -= ((delta as f32) / 12.0).ceil() as i16;
+        n_date.month = 12 - (-n_date.month % 12);
+    } else if n_date.month > 12 {
+        let delta = n_date.month - 12;
+        n_date.year += ((delta as f32) / 12.0).ceil() as i16;
+        n_date.month = delta % 12;
+    }
+    if n_date.month == 0 {
+        n_date.month = 12;
+    }
+    n_date
 }

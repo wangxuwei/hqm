@@ -40,8 +40,7 @@ pub async fn store_access_token(
                             exipre_date: Some(
                                 (Local::now()
                                     + Duration::seconds(params.data.expires_in - GAP_SECS as i64))
-                                .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                                .to_string(),
+                                .to_rfc3339_opts(SecondsFormat::Millis, false),
                             ),
                         },
                     )
@@ -54,8 +53,7 @@ pub async fn store_access_token(
                             access_token: params.data.access_token,
                             exipre_date: (Local::now()
                                 + Duration::seconds(params.data.expires_in - GAP_SECS as i64))
-                            .format("%Y-%m-%dT%H:%M:%S.%3fZ")
-                            .to_string(),
+                            .to_rfc3339_opts(SecondsFormat::Millis, false),
                         },
                     )
                     .await
