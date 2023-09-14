@@ -13,7 +13,7 @@ use crate::unit::unit_stats::{
     LeftIncomeInfo, PaymentInfo,
 };
 use crate::Error;
-use chrono::NaiveDateTime;
+use chrono::{DateTime, Local, NaiveDate};
 use serde::Deserialize;
 use serde_json::Value;
 use std::str::FromStr;
@@ -23,6 +23,30 @@ use tauri::{command, AppHandle, Wry};
 pub struct DateParams {
     start_date: Option<String>,
     end_date: Option<String>,
+}
+
+struct DateInfo {
+    start_date: Option<NaiveDate>,
+    end_date: Option<NaiveDate>,
+}
+
+impl From<DateParams> for DateInfo {
+    fn from(params: DateParams) -> Self {
+        let start_date = params.start_date.map(|s| {
+            DateTime::<Local>::from_str(s.as_str())
+                .unwrap()
+                .date_naive()
+        });
+        let end_date = params.end_date.map(|s| {
+            DateTime::<Local>::from_str(s.as_str())
+                .unwrap()
+                .date_naive()
+        });
+        DateInfo {
+            start_date,
+            end_date,
+        }
+    }
 }
 
 #[command]
@@ -85,12 +109,10 @@ pub async fn get_payment_in_period(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params
-                .start_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
-            let end_date = params
-                .end_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let DateInfo {
+                start_date,
+                end_date,
+            } = params.into();
             let ret = get_payment(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -106,12 +128,10 @@ pub async fn get_valid_left_income(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params
-                .start_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
-            let end_date = params
-                .end_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let DateInfo {
+                start_date,
+                end_date,
+            } = params.into();
             let ret = get_left_income(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -127,12 +147,10 @@ pub async fn get_due_date_units_in_peroid(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params
-                .start_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
-            let end_date = params
-                .end_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let DateInfo {
+                start_date,
+                end_date,
+            } = params.into();
             let ret = get_due_date_unit(&units, start_date, end_date);
             Ok(ret).into()
         }
@@ -148,12 +166,10 @@ pub async fn get_interest_in_period(
     match Ctx::from_app(app) {
         Ok(ctx) => {
             let units = UnitBmc::list(ctx, None).await.unwrap();
-            let start_date = params
-                .start_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
-            let end_date = params
-                .end_date
-                .map(|s| NaiveDateTime::from_str(s.as_str()).unwrap().date());
+            let DateInfo {
+                start_date,
+                end_date,
+            } = params.into();
             let ret = get_interest(&units, start_date, end_date);
             Ok(ret).into()
         }
