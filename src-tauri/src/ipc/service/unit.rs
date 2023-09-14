@@ -2,7 +2,7 @@ use crate::{
     ctx::Ctx,
     model::{OAuthAccessBmc, Unit, UnitBmc, UnitBudgetForCreate, UnitForCreate},
 };
-use chrono::{Local, NaiveDateTime};
+use chrono::{DateTime, Local, NaiveDateTime};
 use reqwest::{
     multipart::{Form, Part},
     Client,
@@ -33,7 +33,9 @@ pub async fn backup_units(ctx: Arc<Ctx>) {
     if let Ok(token) = access_token {
         // check valid token
         let now = Local::now().naive_local();
-        let exipre_date = NaiveDateTime::from_str(token.exipre_date.as_str()).unwrap();
+        let exipre_date = DateTime::<Local>::from_str(token.exipre_date.as_str())
+            .unwrap()
+            .naive_local();
         if now < exipre_date {
             let filename = format!("units_{}.json", now.format("%Y-%m-%d-%H-%M-%S"));
             let units = UnitBmc::list(ctx.clone(), None).await.unwrap();
@@ -64,7 +66,9 @@ pub async fn restore_units(ctx: Arc<Ctx>) {
     if let Ok(token) = access_token {
         // check valid token
         let now = Local::now().naive_local();
-        let exipre_date = NaiveDateTime::from_str(token.exipre_date.as_str()).unwrap();
+        let exipre_date = DateTime::<Local>::from_str(token.exipre_date.as_str())
+            .unwrap()
+            .naive_local();
         if now < exipre_date {
             // FIXME, put info in common conf
             let url = format!("https://pan.baidu.com/rest/2.0/xpan/file?method=list&dir={}&order=time&start=0&limit=1&desc=1&access_token={}", encode("/apps/工具管理"),token.access_token);
