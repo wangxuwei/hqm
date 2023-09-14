@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@tauri-apps/api": "^1.4.0",
-    "chinese-lunar": "^0.1.4",
+    "lunar-typescript": "^1.6.10",
     "utils-min":"^0.2.1",
     "dom-native": "^0.11.2",
     "moment": "^2.22.2",

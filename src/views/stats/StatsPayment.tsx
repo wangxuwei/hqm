@@ -2,8 +2,8 @@ import { Moment } from 'moment';
 import { MouseEvent, useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
-import { formatDate, formatToLunar, mom, now } from '../../ts/utils-date';
-import { solar2lunar } from '../../ts/utils-lunar';
+import { formatDate, mom, now } from '../../ts/utils-date';
+import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import DatePicker from '../comp/DatePicker';
 import "./StatsPayment.pcss";
 
@@ -99,7 +99,7 @@ export default function StatsPayment(){
                 }
                 return (
                   <div className="tr" key={i}>
-                    <div className="td">{formatDate (date)} ({formatToLunar (date)}) {day !== unit.day ? "(加标)":""}</div>
+                    <div className="td">{formatDate (date)} ({formatLunarDate (date)}) {day !== unit.day ? "(加标)":""}</div>
                     <div className="td">{unit.name}</div>
                     <div className="td">{unit.budget.toString()}</div>
                     <div className="td">{unit.unit_count.toString()}</div>

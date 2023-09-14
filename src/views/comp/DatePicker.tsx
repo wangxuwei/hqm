@@ -152,9 +152,9 @@ function getCalendars(month: number, year: number) {
 function getLunarDate(date: Moment) {
 	const lunarDate = solar2lunar(date);
 	if (lunarDate.day == 1) {
-		return formatLunarDate(lunarDate, "M");
+		return formatLunarDate(date, "M");
 	} else {
-		return formatLunarDate(lunarDate, "D");
+		return formatLunarDate(date, "D");
 	}
 }
 
