@@ -157,7 +157,7 @@ pub fn get_unit_budgets(
 }
 
 pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
-    let date = DateTime::<Local>::from_str(&unit.last_bidded_date.as_str())
+    let date = DateTime::<Local>::from_str(unit.last_bidded_date.as_str())
         .unwrap()
         .date_naive();
 
@@ -188,7 +188,7 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
         let mut num: isize = -1;
         let v = match mark_bugdet {
             Some(v) => {
-                let date = DateTime::<Local>::from_str(&v.budget_date.as_str())
+                let date = DateTime::<Local>::from_str(v.budget_date.as_str())
                     .unwrap()
                     .date_naive();
                 num = num_by_date_time(unit, &date);

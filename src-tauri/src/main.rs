@@ -32,7 +32,7 @@ async fn main() -> Result<()> {
     tauri::Builder::default()
         .manage(model_manager)
         .setup(|app: &mut tauri::App| {
-            let dist_dir = app.config().build.dist_dir.to_string().clone();
+            let dist_dir = app.config().build.dist_dir.to_string();
             thread::spawn(move || {
                 // start web server
                 start_server(dist_dir.as_str());

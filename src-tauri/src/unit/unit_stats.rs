@@ -50,7 +50,7 @@ pub fn get_payment(
             let mut payment = base_payment * unit_count;
 
             for self_budget in &self_budgets {
-                let date = DateTime::<Local>::from_str(&self_budget.budget_date.as_str())
+                let date = DateTime::<Local>::from_str(self_budget.budget_date.as_str())
                     .unwrap()
                     .date_naive();
                 if cmp_unit_time(&unit_time, &date) == Ordering::Greater {

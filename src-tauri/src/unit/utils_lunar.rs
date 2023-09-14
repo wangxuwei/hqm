@@ -1,4 +1,4 @@
-use chinese_lunisolar_calendar::{chrono::*, ChineseVariant};
+use chinese_lunisolar_calendar::chrono::*;
 use chinese_lunisolar_calendar::{LunisolarDate, SolarDate};
 
 #[derive(Clone)]
@@ -54,20 +54,20 @@ pub fn solar2lunar(solar_date: NaiveDate) -> Lunar {
     }
 }
 
-pub fn format_lunar_date(lunar_date: Lunar) -> String {
-    let l_date: LunisolarDate = LunisolarDate::from_ymd(
-        lunar_date.year as u16,
-        lunar_date.month as u8,
-        lunar_date.leap,
-        lunar_date.day as u8,
-    )
-    .unwrap();
-    format!(
-        "{}{}",
-        l_date.get_lunar_month().to_str(ChineseVariant::Simple),
-        l_date.get_lunar_day().to_str()
-    )
-}
+// pub fn format_lunar_date(lunar_date: Lunar) -> String {
+//     let l_date: LunisolarDate = LunisolarDate::from_ymd(
+//         lunar_date.year as u16,
+//         lunar_date.month as u8,
+//         lunar_date.leap,
+//         lunar_date.day as u8,
+//     )
+//     .unwrap();
+//     format!(
+//         "{}{}",
+//         l_date.get_lunar_month().to_str(ChineseVariant::Simple),
+//         l_date.get_lunar_day().to_str()
+//     )
+// }
 
 // num 可以负数
 pub fn lunar_month_add(lunar_date: Lunar, num: i8) -> Lunar {
