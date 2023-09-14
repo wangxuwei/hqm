@@ -1,12 +1,10 @@
 use std::cmp::Ordering;
 
-use crate::{
-    model::Unit,
-    unit::{unit_cal::get_unit_times, DATE_FORMAT},
-};
-use chrono::{Local, NaiveDate};
+use crate::{model::Unit, unit::unit_cal::get_unit_times};
+use chrono::{DateTime, Local, NaiveDate};
 use serde::{Deserialize, Serialize};
 use serde_with_macros::skip_serializing_none;
+use std::str::FromStr;
 use ts_rs::TS;
 
 use super::unit_cal::{cmp_unit_time, get_self_budgets, get_unit_budgets};
@@ -49,8 +47,9 @@ pub fn get_payment(
             let mut payment = base_payment * unit_count;
 
             for self_budget in &self_budgets {
-                let date =
-                    NaiveDate::parse_from_str(&self_budget.budget_date, DATE_FORMAT).unwrap();
+                let date = DateTime::<Local>::from_str(&self_budget.budget_date.as_str())
+                    .unwrap()
+                    .date_naive();
                 if cmp_unit_time(&unit_time, &date) == Ordering::Greater {
                     payment += self_budget.budget;
                 }
@@ -259,8 +258,9 @@ pub fn get_interest(
 
             for i in 0..self_budgets.len() {
                 let self_budget = &self_budgets[i];
-                let date =
-                    NaiveDate::parse_from_str(&self_budget.budget_date, DATE_FORMAT).unwrap();
+                let date = DateTime::<Local>::from_str(&self_budget.budget_date.as_str())
+                    .unwrap()
+                    .date_naive();
                 if cmp_unit_time(&unit_budget, &date) != Ordering::Less {
                     interests_arr[i] = Some(self_budget.budget as f32 * -1_f32);
                 }

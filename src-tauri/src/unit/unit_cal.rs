@@ -1,11 +1,8 @@
 use std::cmp::Ordering;
 
-use chrono::{Datelike, NaiveDate};
-
-use crate::{
-    model::{Unit, UnitBudget},
-    unit::DATE_FORMAT,
-};
+use crate::model::{Unit, UnitBudget};
+use chrono::{DateTime, Datelike, Local, NaiveDate};
+use std::str::FromStr;
 
 use super::utils_lunar::{leap_months, lunar2solar, solar2lunar, Lunar};
 
@@ -160,7 +157,9 @@ pub fn get_unit_budgets(
 }
 
 pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
-    let date = NaiveDate::parse_from_str(&unit.last_bidded_date, DATE_FORMAT).unwrap();
+    let date = DateTime::<Local>::from_str(&unit.last_bidded_date.as_str())
+        .unwrap()
+        .date_naive();
 
     // 更新记录时间如果不存在，直接用bidDate, 但是biddedCount要是1
     let prev_dates = next_all_dates(unit, false);
@@ -173,6 +172,7 @@ pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
     for d in next_dates {
         dates.push(d);
     }
+    dates.sort();
     dates
 }
 
@@ -188,7 +188,9 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
         let mut num: isize = -1;
         let v = match mark_bugdet {
             Some(v) => {
-                let date = NaiveDate::parse_from_str(&v.budget_date, DATE_FORMAT).unwrap();
+                let date = DateTime::<Local>::from_str(&v.budget_date.as_str())
+                    .unwrap()
+                    .date_naive();
                 num = num_by_date_time(unit, &date);
                 Some(v.budget as f32)
             }
@@ -225,7 +227,9 @@ pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
 fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
     let mut next_dates: Vec<NaiveDate> = Vec::new();
     let date_str = unit.last_bidded_date.clone();
-    let date = NaiveDate::parse_from_str(&date_str, DATE_FORMAT).unwrap();
+    let date = DateTime::<Local>::from_str(date_str.as_str())
+        .unwrap()
+        .date_naive();
     let date_info = to_date_info(date, unit.is_lunar);
     // 要计算会的支数
     let need_count = if next {
@@ -249,14 +253,14 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                 DateInfo {
                     year: date_info.year,
                     month: date_info.month - plus_cycle as i8,
-                    day: plus_day as i8,
+                    day: plus_day,
                     leap: None,
                 }
             } else {
                 DateInfo {
                     year: date_info.year,
                     month: date_info.month + plus_cycle as i8,
-                    day: plus_day as i8,
+                    day: plus_day,
                     leap: None,
                 }
             };
@@ -275,7 +279,12 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
                 let mut k = 1;
                 while k <= standard_count {
                     // 考虑加标当月有正标
-                    let cur_mon_count = if next { 0 } else { -1 };
+                    let cur_mon_count =
+                        if (next && unit.plus_day.is_some()) || !next && unit.plus_day.is_none() {
+                            0
+                        } else {
+                            -1
+                        };
                     // 有的月份在当月, 往下算正标在后的和往上算正标在前的，都是在当月
                     let delta_month = k + cur_mon_count;
                     let next_date_info = DateInfo {
@@ -355,7 +364,13 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
     }
 
     // 排下序得到结果
-    next_dates.sort();
+    next_dates.sort_by(|d1, d2| {
+        if (next && d1 > d2) || (!next && d1 < d2) {
+            Ordering::Greater
+        } else {
+            Ordering::Less
+        }
+    });
 
     // 取消不符合当前时间的
     let d = date;
@@ -365,8 +380,8 @@ fn next_all_dates(unit: &Unit, next: bool) -> Vec<NaiveDate> {
         .filter(|d1: &NaiveDate| if next { &d < d1 } else { &d > d1 })
         .collect();
 
-    // // 截断超过总会数的
-    // nextDates = nextDates.slice(0, needCount);
+    // 截断超过总会数的
+    let next_dates: Vec<NaiveDate> = next_dates[0..need_count as usize].to_vec();
 
     next_dates
 }
