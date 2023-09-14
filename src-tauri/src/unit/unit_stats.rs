@@ -36,6 +36,9 @@ pub fn get_payment(
     let mut total_payment: i64 = 0;
     for unit in units {
         let unit_times = get_unit_times(unit, start_date, end_date);
+        if unit_times.is_empty() {
+            continue;
+        }
         let self_budgets = get_self_budgets(unit);
         for unit_time in unit_times {
             let unit_count = if unit.unit_count < 1 {
@@ -108,6 +111,9 @@ pub fn get_left_income(
     let today = Local::now().date_naive();
     for unit in units {
         let unit_times = get_unit_times(unit, start_date, end_date);
+        if unit_times.is_empty() {
+            continue;
+        }
         let last_budget_date = unit_times[unit_times.len() - 1].date;
         if let Some(sdate) = start_date {
             if sdate > last_budget_date {
@@ -186,7 +192,10 @@ pub fn get_due_date_unit(
 ) -> DueDateInfo {
     let mut unit_snapshots = Vec::<DueDateSnapShot>::new();
     for unit in units {
-        let unit_times = get_unit_times(unit, start_date, end_date);
+        let unit_times = get_unit_times(unit, None, None);
+        if unit_times.is_empty() {
+            continue;
+        }
         let last_budget_date = unit_times[unit_times.len() - 1].date;
         if let Some(sdate) = start_date {
             if sdate > last_budget_date {
@@ -258,7 +267,7 @@ pub fn get_interest(
 
             for i in 0..self_budgets.len() {
                 let self_budget = &self_budgets[i];
-                let date = DateTime::<Local>::from_str(&self_budget.budget_date.as_str())
+                let date = DateTime::<Local>::from_str(self_budget.budget_date.as_str())
                     .unwrap()
                     .date_naive();
                 if cmp_unit_time(&unit_budget, &date) != Ordering::Less {
