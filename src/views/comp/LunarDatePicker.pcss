@@ -1,0 +1,24 @@
+.LunarDatePicker{
+	&Popup{
+		.ant-picker-cell{
+			padding: 0.2rem 0;
+			.ant-picker-cell-inner{
+				display: flex;
+				flex-direction: column;
+				height: 32px;
+				line-height: 1rem;
+				.lunar-text{
+					font-size: 0.75rem;
+					color: var(--txt-lighter);
+				}
+			}
+			&.ant-picker-cell-selected{
+				.ant-picker-cell-inner{
+					.lunar-text{
+						color: white;
+					}
+				}
+			}
+		}
+	}
+}

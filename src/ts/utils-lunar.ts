@@ -28,7 +28,7 @@ export function solar2lunar(solarDate: Date | Moment): Lunar {
 
 export function formatLunarDate(solarDate: Moment | Date, format?: string): string {
 	const solar = Solar.fromDate(solarDate instanceof Date ? solarDate : solarDate.toDate());
-	format = format || "TAYyMmdD";
+	format = format || "MD";
 	const lunar = solar.getLunar();
 	const val = format.replace(/[TAYyMmdD]/g, function (m, i) {
 		switch (m) {

@@ -1,11 +1,12 @@
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
-import { DatePicker, Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
+import { Form, Input, InputNumber, Modal, Select, Switch } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import dayjs from 'dayjs';
 import { useCallback, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import { antdModal } from '../../ts/nice-modal-fix';
+import LunarDatePicker from '../comp/LunarDatePicker';
 import "./UnitDg.pcss";
 
 export default NiceModal.create(({ unit }: { unit?: Unit }) => {
@@ -120,7 +121,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
 
         <Form.Item label={`上次${lblBidedTxt}`}>
           <Form.Item name="last_bidded_date" label={`上次${lblBidedTxt}时间`} rules={[{ required: true }]} noStyle>
-            <DatePicker />
+            <LunarDatePicker />
           </Form.Item>
         </Form.Item>
         
