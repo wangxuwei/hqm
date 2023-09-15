@@ -1,5 +1,5 @@
+import { Dayjs } from "dayjs";
 import { LunarMonth, Solar } from 'lunar-typescript';
-import { Moment } from 'moment';
 
 export interface Lunar {
 	year: number;
@@ -14,7 +14,7 @@ export interface Lunar {
  * @param month month value should be 1 - 12
  * @param day 
  */
-export function solar2lunar(solarDate: Date | Moment): Lunar {
+export function solar2lunar(solarDate: Date | Dayjs): Lunar {
 	const solar = Solar.fromDate(solarDate instanceof Date ? solarDate : solarDate.toDate());
 	const lunar = solar.getLunar();
 	const lm = LunarMonth.fromYm(lunar.getYear(), lunar.getMonth())!;
@@ -26,7 +26,7 @@ export function solar2lunar(solarDate: Date | Moment): Lunar {
 	}
 }
 
-export function formatLunarDate(solarDate: Moment | Date, format?: string): string {
+export function formatLunarDate(solarDate: Dayjs | Date, format?: string): string {
 	const solar = Solar.fromDate(solarDate instanceof Date ? solarDate : solarDate.toDate());
 	format = format || "MD";
 	const lunar = solar.getLunar();

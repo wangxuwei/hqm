@@ -1,11 +1,12 @@
-import moment, { Moment } from 'moment';
+import { Dayjs } from 'dayjs';
+
 import { useEffect, useRef, useState } from 'react';
-import { formatDate, now } from '../../ts/utils-date';
+import { date, formatDate, now } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./DatePicker.pcss";
 import Ico from './Ico';
 
-function DatePicker(props:{onSelect?:Function, onCancel?:Function, date?:Moment}, state:{}){
+function DatePicker(props:{onSelect?:Function, onCancel?:Function, date?:Dayjs}, state:{}){
 
   const nw = props.date ?? now();
   const [calendar, setCalendar] = useState(getCalendars(nw.month(), nw.year()));
@@ -23,7 +24,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function, date?:Moment}
 
 	function nextMonth(next:boolean){
 		const dir = next ? 1 : -1;
-		let n = moment([calendar.year, calendar.month, 1])
+		let n = date(`${calendar.year}-${calendar.month}-${1}`);
 		n = n.add(dir, 'month');
 		setCalendar(getCalendars(n.month(), n.year()));
 	}
@@ -86,7 +87,7 @@ function DatePicker(props:{onSelect?:Function, onCancel?:Function, date?:Moment}
 
 function getCalendars(month: number, year: number) {
 	const calendar: any = {};
-	const firstDateOfMonth: Moment = moment([year, month, 1]);
+	const firstDateOfMonth: Dayjs = date(`${year}-${month}-${1}`);
 
 	const endDateOfMonth = firstDateOfMonth.clone().add(1, "months").date(0);
 	const weeks = [];
@@ -149,7 +150,7 @@ function getCalendars(month: number, year: number) {
 }
 
 // for lunar
-function getLunarDate(date: Moment) {
+function getLunarDate(date: Dayjs) {
 	const lunarDate = solar2lunar(date);
 	if (lunarDate.day == 1) {
 		return formatLunarDate(date, "M");

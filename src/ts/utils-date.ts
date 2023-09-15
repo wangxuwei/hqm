@@ -1,29 +1,32 @@
-import moment, { Moment } from "moment";
+import dayjs, { Dayjs } from "dayjs";
 
 
-export function formatDate(val: Moment | Date, format?: string) {
+export function formatDate(val: Dayjs | Date, format?: string) {
 	format = format || "YYYY-MM-DD";
-	return mom(val).format(format);
+	return dayjs(val).format(format);
 }
 
-export function formatTime(val: Moment | Date, format?: string) {
+export function formatTime(val: Dayjs | Date, format?: string) {
 	format = format || "HH:mm:ss";
-	return mom(val).format(format);
+	return dayjs(val).format(format);
 }
 
-export function formatDateTime(val: Moment | Date, format?: string) {
+export function formatDateTime(val: Dayjs | Date, format?: string) {
 	format = format || "YYYY-MM-DD HH:mm:ss";
-	return mom(val).format(format);
+	return dayjs(val).format(format);
 }
 
-export function mom(val: any, format?: string): Moment {
+export function date(val: any, format?: string): Dayjs {
 	if (val instanceof Date) {
-		return moment(val);
+		return dayjs(val);
 	}
-	format = format || "YYYY-MM-DD";
-	return moment(val, format);
+	return dayjs(val, format);
 }
 
-export function now(): Moment {
-	return moment();
+export function now(): Dayjs {
+	return dayjs();
+}
+
+export function toRFCString(v: Dayjs): string {
+	return v.format("YYYY-MM-DDTHH:mm:ss.SSSZZ");
 }

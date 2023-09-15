@@ -1,8 +1,7 @@
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
-import { now } from '../../ts/utils-date';
+import { now, toRFCString } from '../../ts/utils-date';
 import LunarDatePicker from '../comp/LunarDatePicker';
 import "./StatsDueDate.pcss";
 
@@ -13,7 +12,7 @@ export default function StatsDueDate() {
   const [items, setItems] = useState([] as ({ unit: Unit, last_budget_date: string })[]);
 
   function refresh() {
-    unitFmc.getDueDateUnitsInPeroid(startDate.toISOString(), endDate.toISOString()).then((result) => {
+    unitFmc.getDueDateUnitsInPeroid(toRFCString(startDate), toRFCString(endDate)).then((result) => {
       setItems(result.unit_snapshots);
     });
   }
@@ -28,13 +27,13 @@ export default function StatsDueDate() {
         <div className="filter-item">
           <span>开始时间：</span>
           <div className="date-input">
-            <LunarDatePicker onChange={(e) => {setStartDate(moment(e?.toISOString()))}}/>
+            <LunarDatePicker onChange={(e) => {setStartDate(e!)}}/>
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
-            <LunarDatePicker onChange={(e) => {setEndDate(moment(e?.toISOString()))}}/>
+            <LunarDatePicker onChange={(e) => {setEndDate(e!)}}/>
           </div>
         </div>
         <div className="filter-item">

@@ -1,8 +1,7 @@
-import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
-import { formatDate, mom, now } from '../../ts/utils-date';
+import { date as dateObj, formatDate, now, toRFCString } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import LunarDatePicker from '../comp/LunarDatePicker';
 import "./StatsPayment.pcss";
@@ -21,7 +20,7 @@ export default function StatsPayment(){
   const [total, setTotal] = useState(0);
 
   function refresh(){
-    unitFmc.getPaymentInPeriod(startDate.toISOString(true), endDate.toISOString(true)).then((result) => {
+    unitFmc.getPaymentInPeriod(toRFCString(startDate), toRFCString(endDate)).then((result) => {
       setItems(result.unit_snapshots);
       setTotal(result.total_payment);
     });
@@ -40,13 +39,13 @@ export default function StatsPayment(){
         <div className="filter-item">
           <span>开始时间：</span>
           <div className="date-input">
-          <LunarDatePicker onChange={(e) => {setStartDate(moment(e?.toISOString()))}}/>
+          <LunarDatePicker onChange={(e) => {setStartDate(e!)}}/>
           </div>
         </div>
         <div className="filter-item">
           <span>结束时间：</span>
           <div className="date-input">
-          <LunarDatePicker onChange={(e) => {setEndDate(moment(e?.toISOString()))}}/>
+          <LunarDatePicker onChange={(e) => {setEndDate(e!)}}/>
           </div>
         </div>
         <div className="filter-item">
@@ -69,7 +68,7 @@ export default function StatsPayment(){
             {
               (items??[]).map((r, i) => {
                 const unit = r.unit;
-                const date = mom(mom(r.date));
+                const date = dateObj(r.date);
                 let day = date.date();
                 if(unit.is_lunar){
                   const lunarDate = solar2lunar(date);
