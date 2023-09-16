@@ -56,35 +56,42 @@ function Units(){
   }
 
   async function onBackup(){
-    // FIXME: to a config file, and make to common valid
-    const webview = new WebviewWindow('oauth_login', {
-      url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
-    });
-
-    webview.once("SEND_OAUTH_TOKEN", (data) => {
-      webview.close();
-      unitFmc.backupUnits();
-    });
-
-    await webview.listen('tauri://window-created', async function () {
-      await webview.show();
-    });
+    const result = await unitFmc.backupUnits();
+    if(!result.data){
+      // FIXME: to a config file, and make to common valid
+      const webview = new WebviewWindow('oauth_login', {
+        url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
+      });
+  
+      webview.once("SEND_OAUTH_TOKEN", (data) => {
+        webview.close();
+        unitFmc.backupUnits();
+      });
+  
+      await webview.listen('tauri://window-created', async function () {
+        await webview.show();
+      });
+    }
+    
   }
 
   async function onRestore(){
-    // FIXME: to a config file, and make to common valid
-    const webview = new WebviewWindow('oauth_login', {
-      url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
-    });
+    const result = await unitFmc.restoreUnits();
+    if(!result.data){
+      // FIXME: to a config file, and make to common valid
+      const webview = new WebviewWindow('oauth_login', {
+        url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
+      });
 
-    webview.once("SEND_OAUTH_TOKEN", (data) => {
-      webview.close();
-      unitFmc.restoreUnits();
-    });
+      webview.once("SEND_OAUTH_TOKEN", (data) => {
+        webview.close();
+        unitFmc.restoreUnits();
+      });
 
-    await webview.listen('tauri://window-created', async function () {
-      await webview.show();
-    });
+      await webview.listen('tauri://window-created', async function () {
+        await webview.show();
+      });
+    }
   }
 
   async function onEdit(id:string){

@@ -122,7 +122,7 @@ impl OAuthAccessBmc {
         match access_tokens {
             Ok(tokens) => {
                 if tokens.is_empty() {
-                    Err(Error::CtxFail)
+                    Err(Error::OAUTH())
                 } else {
                     Ok(tokens[0].clone())
                 }

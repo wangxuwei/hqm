@@ -205,23 +205,29 @@ pub async fn export_units(app: AppHandle<Wry>, params: FilePath) -> IpcResponse<
 }
 
 #[command]
-pub async fn backup_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+pub async fn backup_units(app: AppHandle<Wry>) -> IpcResponse<bool> {
     match Ctx::from_app(app) {
-        Ok(ctx) => {
-            do_backup_units(ctx).await;
-            IpcResponse::from(Ok(true))
-        }
+        Ok(ctx) => match do_backup_units(ctx).await {
+            Ok(r) => Ok(r).into(),
+            Err(e) => match e {
+                Error::OAUTH() => Ok(false).into(),
+                _ => Err(Error::CtxFail).into(),
+            },
+        },
         Err(_) => Err(Error::CtxFail).into(),
     }
 }
 
 #[command]
-pub async fn restore_units(app: AppHandle<Wry>, _params: ListParams<Value>) -> IpcResponse<bool> {
+pub async fn restore_units(app: AppHandle<Wry>) -> IpcResponse<bool> {
     match Ctx::from_app(app) {
-        Ok(ctx) => {
-            do_restore_units(ctx).await;
-            IpcResponse::from(Ok(true))
-        }
+        Ok(ctx) => match do_restore_units(ctx).await {
+            Ok(r) => Ok(r).into(),
+            Err(e) => match e {
+                Error::OAUTH() => Ok(false).into(),
+                _ => Err(Error::CtxFail).into(),
+            },
+        },
         Err(_) => Err(Error::CtxFail).into(),
     }
 }

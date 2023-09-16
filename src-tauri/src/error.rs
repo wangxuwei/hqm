@@ -28,6 +28,8 @@ pub enum Error {
     Surreal(surrealdb::err::Error),
 
     IO(std::io::Error),
+
+    OAUTH(),
 }
 
 // region:    --- Froms

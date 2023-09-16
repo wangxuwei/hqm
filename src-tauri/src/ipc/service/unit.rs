@@ -1,16 +1,9 @@
 use crate::{
     ctx::Ctx,
-    model::{OAuthAccessBmc, Unit, UnitBmc, UnitBudgetForCreate, UnitForCreate},
-};
-use chrono::{DateTime, Local};
-use reqwest::{
-    multipart::{Form, Part},
-    Client,
+    model::{Unit, UnitBmc, UnitBudgetForCreate, UnitForCreate},
 };
 use serde_json::{Map, Value};
-use std::str::FromStr;
-use std::{borrow::Cow, collections::HashMap, fs, sync::Arc};
-use urlencoding::encode;
+use std::{fs, sync::Arc};
 
 pub async fn import_units(ctx: Arc<Ctx>, path: &String) {
     let contents = fs::read_to_string(path).unwrap();
@@ -26,111 +19,6 @@ pub async fn export_units(ctx: Arc<Ctx>, path: &String) {
     let json_obj = convert_units(&units);
     let json_str = serde_json::to_string_pretty(&json_obj).unwrap();
     fs::write(path, json_str).unwrap();
-}
-
-pub async fn backup_units(ctx: Arc<Ctx>) {
-    let access_token = OAuthAccessBmc::get_token(ctx.clone()).await;
-    if let Ok(token) = access_token {
-        // check valid token
-        let now = Local::now().naive_local();
-        let exipre_date = DateTime::<Local>::from_str(token.exipre_date.as_str())
-            .unwrap()
-            .naive_local();
-        if now < exipre_date {
-            let filename = format!("units_{}.json", now.format("%Y-%m-%d-%H-%M-%S"));
-            let units = UnitBmc::list(ctx.clone(), None).await.unwrap();
-            let json_obj = convert_units(&units);
-            let json_str = serde_json::to_string_pretty(&json_obj).unwrap();
-            // do sync
-            let file_byte = json_str.as_bytes().to_vec();
-            // 一定要有file_name方法，且参数不能为空，否则数据上传失败
-            let part = Part::bytes(Cow::from(file_byte)).file_name(filename.clone());
-            let form = Form::new().part("file", part);
-            Client::new()
-                .post(format!(
-                    "https://d.pcs.baidu.com/rest/2.0/pcs/file?method=upload&access_token={}&ondup=overwrite&path=/apps/工具管理/{}",
-                    token.access_token,
-                    filename
-                ))
-                .multipart(form)
-                .send()
-                // FIXME, baidu http(一般也不会panic)错误返回好像没有panic！，是否处理, 错误吗“31064”-上传路径权限
-                .await
-                .unwrap();
-        }
-    }
-}
-
-pub async fn restore_units(ctx: Arc<Ctx>) {
-    let access_token = OAuthAccessBmc::get_token(ctx.clone()).await;
-    if let Ok(token) = access_token {
-        // check valid token
-        let now = Local::now().naive_local();
-        let exipre_date = DateTime::<Local>::from_str(token.exipre_date.as_str())
-            .unwrap()
-            .naive_local();
-        if now < exipre_date {
-            // FIXME, put info in common conf
-            let url = format!("https://pan.baidu.com/rest/2.0/xpan/file?method=list&dir={}&order=time&start=0&limit=1&desc=1&access_token={}", encode("/apps/工具管理"),token.access_token);
-            let resp = Client::new()
-                .get(url)
-                .header("User-Agent", "pan.baidu.com")
-                .send()
-                .await
-                .unwrap()
-                .json::<HashMap<String, Value>>()
-                .await
-                .unwrap();
-
-            let file_list = resp.get("list").unwrap().as_array().unwrap();
-            if file_list.is_empty() {
-                return;
-            }
-
-            let file_info: &Map<String, Value> = file_list[0].as_object().unwrap();
-
-            // get dlink
-            let fs_str = format!("[{}]", file_info["fs_id"].as_i64().unwrap());
-            let url = format!("http://pan.baidu.com/rest/2.0/xpan/multimedia?method=filemetas&thumb=1&dlink=1&extra=1&fsids={}&access_token={}", encode(fs_str.as_str()),token.access_token);
-            let resp = Client::new()
-                .get(url)
-                .header("User-Agent", "pan.baidu.com")
-                .send()
-                .await
-                .unwrap()
-                .json::<HashMap<String, Value>>()
-                .await
-                .unwrap();
-
-            let file_list = resp.get("list").unwrap().as_array().unwrap();
-            if file_list.is_empty() {
-                return;
-            }
-
-            let file_info: &Map<String, Value> = file_list[0].as_object().unwrap();
-
-            // download
-            let dlink = file_info["dlink"].as_str().unwrap();
-            let url = format!("{}&access_token={}", dlink, token.access_token);
-            let resp = Client::new()
-                .get(url)
-                .header("User-Agent", "pan.baidu.com")
-                .send()
-                .await
-                .unwrap()
-                .bytes()
-                .await
-                .unwrap();
-
-            let json_str = String::from_utf8(resp.to_vec()).unwrap();
-
-            let units = parse_units(&json_str);
-            for u in units {
-                // FIXME: batch create
-                UnitBmc::create(ctx.clone(), u).await.unwrap();
-            }
-        }
-    }
 }
 
 pub fn parse_units(raw_json: &str) -> Vec<UnitForCreate> {
