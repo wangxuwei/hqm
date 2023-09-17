@@ -1,11 +1,11 @@
 import { DatePicker } from 'antd';
-import { PickerDateProps } from 'antd/es/date-picker/generatePicker';
+import { PickerBaseProps, PickerDateProps } from 'antd/es/date-picker/generatePicker';
 import { Dayjs } from "dayjs";
 import { date } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./LunarDatePicker.pcss";
 
-function LunarDatePicker(props:PickerDateProps<Dayjs>, state:any){
+function LunarDatePicker(props:PickerDateProps<Dayjs> & PickerBaseProps, state:any){
   return (
     <DatePicker
       {...props}

@@ -1,3 +1,5 @@
+import { Button, Form } from 'antd';
+import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
@@ -35,23 +37,15 @@ export default function StatsPayment(){
   }, [setItems]);
   return (
     <div className="StatsPayment section">
-      <div className="section-filter">
-        <div className="filter-item">
-          <span>开始时间：</span>
-          <div className="date-input">
-          <LunarDatePicker onChange={(e) => {setStartDate(e!)}}/>
-          </div>
-        </div>
-        <div className="filter-item">
-          <span>结束时间：</span>
-          <div className="date-input">
-          <LunarDatePicker onChange={(e) => {setEndDate(e!)}}/>
-          </div>
-        </div>
-        <div className="filter-item">
-          <button className="search" onClick={onSearch}>查询</button>
-        </div>
-      </div>
+      <Form className="section-filter">
+        <Form.Item className="filter-item" name="day" label="开始时间：">
+          <LunarDatePicker onChange={(e:Dayjs) => {setStartDate(e!)}}/>
+        </Form.Item>
+        <Form.Item className="filter-item" name="day" label="结束时间：">
+          <LunarDatePicker onChange={(e:Dayjs) => {setEndDate(e!)}}/>
+        </Form.Item>
+        <Button className="filter-item" onClick={onSearch}>查询</Button>
+      </Form>
       <div className="section-results">
         <div className="table">
           <div className="thead">

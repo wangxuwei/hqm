@@ -1,3 +1,4 @@
+import { Select } from 'antd';
 import { useState } from 'react';
 import "./Stats.pcss";
 import StatsDueDate from './StatsDueDate';
@@ -18,11 +19,15 @@ export default function Stats(){
   return (
     <div className="Stats">
       <header className="Stats-header">
-        <select name="statsType" value={type} onChange={(e) => {setType(e.target.value)}}>
-          <option value="Payment">按时间的总支付</option>
-          <option value="LeftIncome">剩余收入</option>
-          <option value="DueDate">到期时间</option>
-        </select>
+        <Select
+          defaultValue="Payment"
+          onChange={(e) => {setType(e)}}
+          options={[
+            { value: 'Payment', label: '按时间的总支付' },
+            { value: 'LeftIncome', label: '剩余收入' },
+            { value: 'DueDate', label: '到期时间' }
+          ]}
+        />
       </header>
       <section className="Stats-section section-ctn">
         {typeToView[type]}
