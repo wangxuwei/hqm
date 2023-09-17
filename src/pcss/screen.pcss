@@ -15,24 +15,35 @@
 		flex-direction: column;
 		margin-top: 16px;
 		overflow: hidden;
-		.screen-table{
-			flex:1;
-			margin: 1rem;
-		}
-		.screen-table-actions{
-			margin: 0.5rem 1rem;
-			display: flex;
-			.action-item{
-				display: flex;
+	}
+	.screen-filter{
+		display: flex;
+		align-items: center;
+		.filter-item{
+			margin-left: 1rem;
+			margin-bottom: 0;
+			&:first-child{
+				margin-left: 0;
 			}
 		}
-		.table{
-			flex:1;
-			.tbody{
-				.tr{
-					&:nth-child(2n+1){
-						background: var(--bkg-light);
-					}
+	}
+	.screen-table{
+		flex:1;
+		margin: 1rem;
+	}
+	.screen-table-actions{
+		margin: 0.5rem 1rem;
+		display: flex;
+		.action-item{
+			display: flex;
+		}
+	}
+	.table{
+		flex:1;
+		.tbody{
+			.tr{
+				&:nth-child(2n+1){
+					background: var(--bkg-light);
 				}
 			}
 		}

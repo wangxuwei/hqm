@@ -1,13 +1,13 @@
-import { Button, Form } from 'antd';
+import { Button, Form, Table } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
+import { PaymentSnapShot } from '../../bindings/PaymentSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
 import { date as dateObj, formatDate, now, toRFCString } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import LunarDatePicker from '../comp/LunarDatePicker';
 import "./StatsPayment.pcss";
-
 
 
 export default function StatsPayment(){
@@ -35,9 +35,59 @@ export default function StatsPayment(){
   useEffect(() => {
     refresh();
   }, [setItems]);
+
+  const columns = [
+    {
+      title: '时间',
+      key: 'time',
+      render: (_:string, r:PaymentSnapShot) => {
+          const unit = r.unit;
+          const date = dateObj(r.date);
+          let day = date.date();
+          if(unit.is_lunar){
+            const lunarDate = solar2lunar(date);
+            day = lunarDate.day;
+          }
+        return `${formatDate (date)} (${formatLunarDate (date)}) ${day !== unit.day ? "(加标)":""}`
+      }
+    },
+    {
+      title: '名称',
+      dataIndex: ['unit', 'name']
+    },
+    {
+      title: '标金',
+      key: 'budget',
+      render: (_:string, r:PaymentSnapShot) => {
+        const unit = r.unit;
+        return unit.budget.toString();
+      }
+    },
+    {
+      title: '支数',
+      key: 'unit_count',
+      render: (_:string, r:PaymentSnapShot) => {
+        const unit = r.unit;
+        return unit.unit_count.toString();
+      }
+    },
+    {
+      title: '支付金额',
+      dataIndex: 'payment'
+    },
+    {
+      title: '进度',
+      key: 'progress',
+      render: (_:string, r:PaymentSnapShot) => {
+        const unit = r.unit;
+        return `${r.number} / ${unit.count.toString()}`
+      }
+    },
+  ];
+
   return (
-    <div className="StatsPayment section">
-      <Form className="section-filter" initialValues={{
+    <div className="StatsPayment screen">
+      <Form className="screen-filter" initialValues={{
         startDate,
         endDate
       }}>
@@ -49,43 +99,15 @@ export default function StatsPayment(){
         </Form.Item>
         <Button className="filter-item" onClick={onSearch}>查询</Button>
       </Form>
-      <div className="section-results">
-        <div className="table">
-          <div className="thead">
-            <div className="tr">
-              <div className="td">时间</div>
-              <div className="td">名称</div>
-              <div className="td">标金</div>
-              <div className="td">支数</div>
-              <div className="td">支付金额</div>
-              <div className="td">进度</div>
-            </div>
-          </div>
-          <div className="tbody">
-            {
-              (items??[]).map((r, i) => {
-                const unit = r.unit;
-                const date = dateObj(r.date);
-                let day = date.date();
-                if(unit.is_lunar){
-                  const lunarDate = solar2lunar(date);
-                  day = lunarDate.day;
-                }
-                return (
-                  <div className="tr" key={i}>
-                    <div className="td">{formatDate (date)} ({formatLunarDate (date)}) {day !== unit.day ? "(加标)":""}</div>
-                    <div className="td">{unit.name}</div>
-                    <div className="td">{unit.budget.toString()}</div>
-                    <div className="td">{unit.unit_count.toString()}</div>
-                    <div className="td">{r.payment}</div>
-                    <div className="td">{r.number} / {unit.count.toString()}</div>
-                  </div>)
-              })
-            }
-          </div>
-          <div className="tfoot">总支出: {total}</div>
-      </div>
+
+      <Table className="screen-table" columns={columns} dataSource={items} pagination={false} 
+        summary={() => (
+          <Table.Summary fixed>
+            <Table.Summary.Row>
+              <Table.Summary.Cell index={0} colSpan={6} align='right'>总支出: {total}</Table.Summary.Cell>
+            </Table.Summary.Row>
+          </Table.Summary>
+        )}/>
     </div>
-  </div>
   )
 }
