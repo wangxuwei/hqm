@@ -25,13 +25,16 @@ export default function StatsDueDate() {
 
   return (
     <div className="StatsDueDate section">
-      <Form className="section-filter">
-        <Form.Item className="filter-item" name="day" label="开始时间：">
-          <LunarDatePicker onChange={(e:Dayjs) => {setStartDate(e!)}}/>
-        </Form.Item>
-        <Form.Item className="filter-item" name="day" label="结束时间：">
-          <LunarDatePicker onChange={(e:Dayjs) => {setEndDate(e!)}}/>
-        </Form.Item>
+      <Form className="section-filter" initialValues={{
+        startDate,
+        endDate
+      }}>
+      <Form.Item className="filter-item" name="startDate" label="开始时间：">
+        <LunarDatePicker onChange={(e:Dayjs) => {setStartDate(e!)}} />
+      </Form.Item>
+      <Form.Item className="filter-item" name="endDate" label="结束时间：">
+        <LunarDatePicker onChange={(e:Dayjs) => {setEndDate(e!)}} />
+      </Form.Item>
         <Button className="filter-item" onClick={refresh}>查询</Button>
       </Form>
       <div className="section-results">
