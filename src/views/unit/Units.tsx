@@ -76,16 +76,20 @@ function Units(){
   }
 
   async function onRestore(){
-    const result = await unitFmc.restoreUnits();
+    const result = await unitFmc.restoreUnits().then((x) => {
+      refresh();
+      return x;
+    });
     if(!result.data){
       // FIXME: to a config file, and make to common valid
       const webview = new WebviewWindow('oauth_login', {
         url: 'http://openapi.baidu.com/oauth/2.0/authorize?response_type=token&client_id=GF1F8hGh0fRHlQhsYGkO4qBVrNU3oGhN&redirect_uri=http://localhost:6128&scope=basic,netdisk'
       });
 
-      webview.once("SEND_OAUTH_TOKEN", (data) => {
+      webview.once("SEND_OAUTH_TOKEN", async (data) => {
         webview.close();
-        unitFmc.restoreUnits();
+        await unitFmc.restoreUnits();
+        refresh();
       });
 
       await webview.listen('tauri://window-created', async function () {
