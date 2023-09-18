@@ -86,7 +86,7 @@ export default function StatsPayment(){
   ];
 
   return (
-    <div className="StatsPayment screen">
+    <div className="StatsPayment">
       <Form className="screen-filter" initialValues={{
         startDate,
         endDate

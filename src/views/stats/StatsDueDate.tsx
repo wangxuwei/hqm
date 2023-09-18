@@ -1,7 +1,8 @@
-import { Button, Form } from 'antd';
+import { Button, Form, Table } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
+import { DueDateSnapShot } from '../../bindings/DueDateSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
 import { now, toRFCString } from '../../ts/utils-date';
 import LunarDatePicker from '../comp/LunarDatePicker';
@@ -23,9 +24,37 @@ export default function StatsDueDate() {
     refresh();
   }, [setItems]);
 
+
+  const columns = [
+    {
+      title: '名称',
+      dataIndex: ['unit', 'name']
+    },
+    {
+      title: '标金',
+      key: 'budget',
+      render: (_:string, r:DueDateSnapShot) => {
+        const unit = r.unit;
+        return unit.budget.toString();
+      }
+    },
+    {
+      title: '支数',
+      key: 'unit_count',
+      render: (_:string, r:DueDateSnapShot) => {
+        const unit = r.unit;
+        return unit.unit_count.toString();
+      }
+    },
+    {
+      title: '结束时间',
+      key: 'last_budget_date',
+    }
+  ];
+  
   return (
-    <div className="StatsDueDate section">
-      <Form className="section-filter" initialValues={{
+    <div className="StatsDueDate">
+      <Form className="screen-filter" initialValues={{
         startDate,
         endDate
       }}>
@@ -37,33 +66,8 @@ export default function StatsDueDate() {
       </Form.Item>
         <Button className="filter-item" onClick={refresh}>查询</Button>
       </Form>
-      <div className="section-results">
-        <div className="table">
-          <div className="thead">
-            <div className="tr">
-              <div className="td">名称</div>
-              <div className="td">标金</div>
-              <div className="td">支数</div>
-              <div className="td">结束时间</div>
-            </div>
-          </div>
-          <div className="tbody">
-            {
-              items.map((r, i) => {
-                const unit = r.unit;
-                return (
-                  <div className="tr" key={i}>
-                    <div className="td">{unit.name}</div>
-                    <div className="td">{unit.budget.toString()}</div>
-                    <div className="td">{unit.unit_count.toString()}</div>
-                    <div className="td">{r.last_budget_date}</div>
-                  </div>
-                )
-              })
-            }
-          </div>
-        </div>
-      </div>
+
+      <Table className="screen-table" columns={columns} dataSource={items} pagination={false}/>
     </div>
   )
 }

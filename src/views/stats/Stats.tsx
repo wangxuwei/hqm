@@ -17,8 +17,8 @@ export default function Stats(){
   const [type, setType] = useState("Payment");
 
   return (
-    <div className="Stats">
-      <header className="Stats-header">
+    <div className="Stats screen">
+      <header className="screen-header">
         <Select
           defaultValue="Payment"
           onChange={(e) => {setType(e)}}
@@ -29,7 +29,7 @@ export default function Stats(){
           ]}
         />
       </header>
-      <section className="Stats-section section-ctn">
+      <section className="screen-main">
         {typeToView[type]}
       </section>
     </div>
