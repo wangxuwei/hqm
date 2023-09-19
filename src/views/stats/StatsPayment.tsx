@@ -1,7 +1,6 @@
 import { Button, Form, Table } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Unit } from '../../bindings';
 import { PaymentSnapShot } from '../../bindings/PaymentSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
 import { date as dateObj, formatDate, now, toRFCString } from '../../ts/utils-date';
@@ -14,11 +13,7 @@ export default function StatsPayment(){
 
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "months").date(0));
-  const [items, setItems] = useState([] as {
-    unit:Unit
-    date: string,
-    payment:number,
-    number: number}[]);
+  const [items, setItems] = useState([] as PaymentSnapShot[]);
   const [total, setTotal] = useState(0);
 
   function refresh(){
@@ -39,7 +34,7 @@ export default function StatsPayment(){
   const columns = [
     {
       title: '时间',
-      key: 'time',
+      key: 'time-index',
       render: (_:string, r:PaymentSnapShot) => {
           const unit = r.unit;
           const date = dateObj(r.date);
@@ -57,19 +52,11 @@ export default function StatsPayment(){
     },
     {
       title: '标金',
-      key: 'budget',
-      render: (_:string, r:PaymentSnapShot) => {
-        const unit = r.unit;
-        return unit.budget.toString();
-      }
+      dataIndex: ['unit', 'budget']
     },
     {
       title: '支数',
-      key: 'unit_count',
-      render: (_:string, r:PaymentSnapShot) => {
-        const unit = r.unit;
-        return unit.unit_count.toString();
-      }
+      dataIndex: ['unit', 'unit_count']
     },
     {
       title: '支付金额',
@@ -100,7 +87,7 @@ export default function StatsPayment(){
         <Button className="filter-item" onClick={onSearch}>查询</Button>
       </Form>
 
-      <Table className="screen-table" columns={columns} dataSource={items} pagination={false} 
+      <Table rowKey={(r:PaymentSnapShot) => r.date + r.unit.name} className="screen-table" columns={columns} dataSource={items} pagination={false} 
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>

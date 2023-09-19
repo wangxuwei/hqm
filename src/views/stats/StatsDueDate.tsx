@@ -2,7 +2,6 @@ import { Button, Form, Table } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
-import { DueDateSnapShot } from '../../bindings/DueDateSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
 import { now, toRFCString } from '../../ts/utils-date';
 import LunarDatePicker from '../comp/LunarDatePicker';
@@ -32,23 +31,15 @@ export default function StatsDueDate() {
     },
     {
       title: '标金',
-      key: 'budget',
-      render: (_:string, r:DueDateSnapShot) => {
-        const unit = r.unit;
-        return unit.budget.toString();
-      }
+      dataIndex: ['unit', 'budget']
     },
     {
       title: '支数',
-      key: 'unit_count',
-      render: (_:string, r:DueDateSnapShot) => {
-        const unit = r.unit;
-        return unit.unit_count.toString();
-      }
+      dataIndex: ['unit', 'unit_count']
     },
     {
       title: '结束时间',
-      key: 'last_budget_date',
+      dataIndex: 'last_budget_date',
     }
   ];
   
@@ -67,7 +58,7 @@ export default function StatsDueDate() {
         <Button className="filter-item" onClick={refresh}>查询</Button>
       </Form>
 
-      <Table className="screen-table" columns={columns} dataSource={items} pagination={false}/>
+      <Table rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false}/>
     </div>
   )
 }

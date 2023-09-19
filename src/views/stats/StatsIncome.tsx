@@ -48,11 +48,11 @@ export default function StatsIncome() {
     },
     {
       title: '开始时间',
-      key: 'first_date',
+      dataIndex: 'first_date',
     },
     {
       title: '结束时间',
-      key: 'last_budget_date',
+      dataIndex: 'last_budget_date',
     },
     {
       title: '进度',
@@ -75,7 +75,7 @@ export default function StatsIncome() {
   return (
     <div className="StatsIncome">
 
-      <Table className="screen-table" columns={columns} dataSource={items} pagination={false} 
+      <Table rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false} 
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
