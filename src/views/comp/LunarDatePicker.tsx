@@ -5,7 +5,7 @@ import { date } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./LunarDatePicker.pcss";
 
-function LunarDatePicker(props:PickerDateProps<Dayjs> & PickerBaseProps, state:any){
+function LunarDatePicker(props:PickerBaseProps<Dayjs> | PickerDateProps<Dayjs>, state:any){
   return (
     <DatePicker
       {...props}

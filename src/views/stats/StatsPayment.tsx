@@ -1,5 +1,4 @@
 import { Button, Form, Table } from 'antd';
-import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { PaymentSnapShot } from '../../bindings/PaymentSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
@@ -79,10 +78,10 @@ export default function StatsPayment(){
         endDate
       }}>
         <Form.Item className="filter-item" name="startDate" label="开始时间：">
-          <LunarDatePicker onChange={(e:Dayjs) => {setStartDate(e!)}} />
+          <LunarDatePicker onChange={(e) => {setStartDate(e!)}} />
         </Form.Item>
         <Form.Item className="filter-item" name="endDate" label="结束时间：">
-          <LunarDatePicker onChange={(e:Dayjs) => {setEndDate(e!)}} />
+          <LunarDatePicker onChange={(e) => {setEndDate(e!)}} />
         </Form.Item>
         <Button className="filter-item" onClick={onSearch}>查询</Button>
       </Form>
