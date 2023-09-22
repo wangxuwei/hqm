@@ -53,8 +53,6 @@ export default defineConfig(async () => ({
       },
       input: {
         index: resolve(__dirname, './index.html'),
-        oauth: resolve(__dirname, './oauth.html'),
-
       }
     }
   },

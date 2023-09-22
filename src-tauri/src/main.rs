@@ -26,16 +26,23 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    // FIXME, only for debug
+    // OsLogger::new("com.friping.hqm")
+    //     .level_filter(LevelFilter::Info)
+    //     .init()
+    //     .unwrap();
+
     let model_manager = ModelStore::new().await?;
     let model_manager = Arc::new(model_manager);
 
     tauri::Builder::default()
         .manage(model_manager)
         .setup(|app: &mut tauri::App| {
-            let dist_dir = app.config().build.dist_dir.to_string();
+            let handle = app.handle();
             thread::spawn(move || {
                 // start web server
-                start_server(dist_dir.as_str());
+                println!("ffff");
+                start_server(handle);
             });
             Ok(())
         })

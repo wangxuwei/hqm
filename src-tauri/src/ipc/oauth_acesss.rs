@@ -18,8 +18,8 @@ const GAP_SECS: u8 = 20;
 #[derive(Serialize, Deserialize, TS, Debug, Clone)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct AccessConf {
-    access_token: String,
-    expires_in: i64,
+    pub access_token: String,
+    pub expires_in: i64,
 }
 
 #[command]

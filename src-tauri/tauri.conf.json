@@ -21,7 +21,10 @@
         "icons/icon.ico"
       ],
       "identifier": "com.friping.hqm",
-      "targets": "all"
+      "targets": "all",
+      "macOS":{
+        "exceptionDomain": "baidu.com"
+      }
     },
     "allowlist": {
       "dialog": {
@@ -41,6 +44,11 @@
         {
           "windows": ["oauth_login"],
           "domain": "localhost",
+          "enableTauriAPI": true
+        },
+        {
+          "windows": ["oauth_login"],
+          "domain": "baidu.com",
           "enableTauriAPI": true
         }
       ]
