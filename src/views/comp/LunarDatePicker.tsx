@@ -1,7 +1,6 @@
 import { DatePicker } from 'antd';
 import { PickerBaseProps, PickerDateProps } from 'antd/es/date-picker/generatePicker';
 import { Dayjs } from "dayjs";
-import { date } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import "./LunarDatePicker.pcss";
 
@@ -21,7 +20,7 @@ function LunarDatePicker(props:PickerBaseProps<Dayjs> | PickerDateProps<Dayjs>, 
             return (
               <div className="ant-picker-cell-inner">
                 <div>{current.date()}</div>
-                <div className="lunar-text">{getLunarDate(date(`${current.year()}-${current.month()}-${current.date()}`))}</div>
+                <div className="lunar-text">{getLunarDate(current)}</div>
               </div>);
         }
       }}
