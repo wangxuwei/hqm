@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { LeftIncomeSnapShot } from '../../bindings/LeftIncomeSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
+import { date, formatDate } from '../../ts/utils-date';
 import ScrollTable from '../comp/ScrollTable';
 import "./StatsIncome.pcss";
 
@@ -49,11 +50,17 @@ export default function StatsIncome() {
     },
     {
       title: '开始时间',
-      dataIndex: 'first_date',
+      key: 'first_date',
+      render: (_:string, r:LeftIncomeSnapShot) => {
+        return formatDate(date(r.first_date), "YYYY-MM-DD");
+      }
     },
     {
       title: '结束时间',
-      dataIndex: 'last_budget_date',
+      key: 'last_budget_date',
+      render: (_:string, r:LeftIncomeSnapShot) => {
+        return formatDate(date(r.last_budget_date), "YYYY-MM-DD");
+      }
     },
     {
       title: '进度',

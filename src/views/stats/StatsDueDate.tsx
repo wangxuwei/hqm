@@ -1,8 +1,8 @@
 import { Button, Form } from 'antd';
 import { useEffect, useState } from 'react';
-import { Unit } from '../../bindings';
+import { DueDateSnapShot } from '../../bindings/DueDateSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
-import { now, toRFCString } from '../../ts/utils-date';
+import { date, formatDate, now, toRFCString } from '../../ts/utils-date';
 import LunarDatePicker from '../comp/LunarDatePicker';
 import ScrollTable from '../comp/ScrollTable';
 import "./StatsDueDate.pcss";
@@ -11,7 +11,7 @@ export default function StatsDueDate() {
 
   const [startDate, setStartDate] = useState(now());
   const [endDate, setEndDate] = useState(now().add(1, "years").month(0).date(0));
-  const [items, setItems] = useState([] as ({ unit: Unit, last_budget_date: string })[]);
+  const [items, setItems] = useState([] as DueDateSnapShot[]);
 
   function refresh() {
     unitFmc.getDueDateUnitsInPeroid(toRFCString(startDate), toRFCString(endDate)).then((result) => {
@@ -39,7 +39,10 @@ export default function StatsDueDate() {
     },
     {
       title: '结束时间',
-      dataIndex: 'last_budget_date',
+      key: 'last_budget_date',
+      render: (_:string, r:DueDateSnapShot) => {
+        return formatDate(date(r.last_budget_date), "YYYY-MM-DD");
+      }
     }
   ];
   
