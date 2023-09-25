@@ -1,9 +1,10 @@
-import { Button, Form, Table } from 'antd';
+import { Button, Form } from 'antd';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import { now, toRFCString } from '../../ts/utils-date';
 import LunarDatePicker from '../comp/LunarDatePicker';
+import ScrollTable from '../comp/ScrollTable';
 import "./StatsDueDate.pcss";
 
 export default function StatsDueDate() {
@@ -57,7 +58,7 @@ export default function StatsDueDate() {
         <Button className="filter-item" onClick={refresh}>查询</Button>
       </Form>
 
-      <Table rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false}/>
+      <ScrollTable scroll={{y: 10}} rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false}/>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { unitFmc } from '../../model/fmc-unit';
 import { date as dateObj, formatDate, now, toRFCString } from '../../ts/utils-date';
 import { formatLunarDate, solar2lunar } from '../../ts/utils-lunar';
 import LunarDatePicker from '../comp/LunarDatePicker';
+import ScrollTable from '../comp/ScrollTable';
 import "./StatsPayment.pcss";
 
 
@@ -86,7 +87,7 @@ export default function StatsPayment(){
         <Button className="filter-item" onClick={onSearch}>查询</Button>
       </Form>
 
-      <Table rowKey={(r:PaymentSnapShot) => r.date + r.unit.name} className="screen-table" columns={columns} dataSource={items} pagination={false} 
+      <ScrollTable scroll={{y: 10}} rowKey={(r:PaymentSnapShot) => r.date + r.unit.name} className="screen-table" columns={columns} dataSource={items} pagination={false} 
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>

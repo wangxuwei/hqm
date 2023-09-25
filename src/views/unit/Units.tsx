@@ -1,12 +1,13 @@
 import { useModal } from '@ebay/nice-modal-react';
 import { open, save } from '@tauri-apps/api/dialog';
 import { WebviewWindow } from '@tauri-apps/api/window';
-import { Button, Space, Table } from 'antd';
+import { Button, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import UnitDg from './UnitDg';
 
+import ScrollTable from '../comp/ScrollTable';
 import "./Units.pcss";
 
 
@@ -152,7 +153,7 @@ function Units(){
           <Button className="action-item" onClick={onBackup}>备份</Button>
           <Button className="action-item" onClick={onRestore}>恢复</Button>
         </div>
-        <Table className="screen-table" columns={columns} dataSource={data} pagination={false} />
+        <ScrollTable className="screen-table" columns={columns} dataSource={data} pagination={false} />
       </div>
     </div>
   )

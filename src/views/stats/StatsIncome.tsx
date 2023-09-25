@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { LeftIncomeSnapShot } from '../../bindings/LeftIncomeSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
+import ScrollTable from '../comp/ScrollTable';
 import "./StatsIncome.pcss";
 
 export default function StatsIncome() {
@@ -75,7 +76,7 @@ export default function StatsIncome() {
   return (
     <div className="StatsIncome">
 
-      <Table rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false} 
+      <ScrollTable scroll={{y: 10}} rowKey={(r) => r.unit.id} className="screen-table" columns={columns} dataSource={items} pagination={false} 
         summary={() => (
           <Table.Summary fixed>
             <Table.Summary.Row>
