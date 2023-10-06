@@ -41,7 +41,6 @@ async fn main() -> Result<()> {
             let handle = app.handle();
             thread::spawn(move || {
                 // start web server
-                println!("ffff");
                 start_server(handle);
             });
             Ok(())
