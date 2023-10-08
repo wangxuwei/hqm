@@ -109,13 +109,14 @@ pub fn get_left_income(
     let mut unit_snapshots = Vec::<LeftIncomeSnapShot>::new();
     let mut total_income = 0;
     let today = Local::now().date_naive();
+    let w_start_date = Some(start_date.unwrap_or(today));
     for unit in units {
         let unit_times = get_unit_times(unit, start_date, end_date);
         if unit_times.is_empty() {
             continue;
         }
         let last_budget_date = unit_times[unit_times.len() - 1].date;
-        if let Some(sdate) = start_date {
+        if let Some(sdate) = w_start_date {
             if sdate > last_budget_date {
                 continue;
             }
