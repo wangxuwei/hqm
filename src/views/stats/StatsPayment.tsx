@@ -1,4 +1,4 @@
-import { Button, Form, Table } from 'antd';
+import { Button, Form, Select, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import { PaymentSnapShot } from '../../bindings/PaymentSnapShot';
 import { unitFmc } from '../../model/fmc-unit';
@@ -15,9 +15,11 @@ export default function StatsPayment(){
   const [endDate, setEndDate] = useState(now().add(1, "months").date(0));
   const [items, setItems] = useState([] as PaymentSnapShot[]);
   const [total, setTotal] = useState(0);
+  const [selectedUnitIds, setSelectedUnitIds] = useState([] as string[]);
+  const [units, setUnits] = useState([] as {value:string, label:string}[]);
 
   function refresh(){
-    unitFmc.getPaymentInPeriod(toRFCString(startDate), toRFCString(endDate)).then((result) => {
+    unitFmc.getPaymentInPeriod(selectedUnitIds, toRFCString(startDate), toRFCString(endDate)).then((result) => {
       setItems(result.unit_snapshots);
       setTotal(result.total_payment);
     });
@@ -29,6 +31,11 @@ export default function StatsPayment(){
 
   useEffect(() => {
     refresh();
+    unitFmc.listUnits().then((result) => {
+      setUnits((result ?? []).map((u) => {
+        return {value: u.id, label: u.name};
+      }));
+    });
   }, [setItems]);
 
   const columns = [
@@ -78,6 +85,14 @@ export default function StatsPayment(){
         startDate,
         endDate
       }}>
+      <Form.Item className="filter-item">
+        <Select
+            mode="multiple"
+            placeholder="所有互助会"
+            options={units}
+            onChange={(e:string[]) => {setSelectedUnitIds(e)}} 
+          />
+        </Form.Item>
         <Form.Item className="filter-item" name="startDate" label="开始时间：">
           <LunarDatePicker onChange={(e) => {setStartDate(e!)}} />
         </Form.Item>

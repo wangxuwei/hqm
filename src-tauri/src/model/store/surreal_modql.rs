@@ -15,7 +15,7 @@ use crate::{Error, Result};
 use modql::filter::{FilterGroups, OpVal, OpValBool, OpValFloat64, OpValInt64, OpValString};
 use modql::ListOptions;
 use std::collections::BTreeMap;
-use surrealdb::sql::Value;
+use surrealdb::sql::{Number, Value};
 
 pub(super) fn build_select_query(
     tb: &str,
@@ -114,6 +114,23 @@ fn sqlize(opval: OpVal, prop_name: &str, var_idx: &str) -> Result<(String, Value
         OpVal::String(OpValString::Gte(v)) => (f!("{prop_name} > ${var_idx}"), v.into()),
         OpVal::Int64(OpValInt64::Gte(v)) => (f!("{prop_name} > ${var_idx}"), v.into()),
         OpVal::Float64(OpValFloat64::Gte(v)) => (f!("{prop_name} > ${var_idx}"), v.into()),
+
+        // in
+        OpVal::String(OpValString::In(v)) => (f!("{prop_name} in ${var_idx}"), v.into()),
+        OpVal::Int64(OpValInt64::In(v)) => (
+            f!("{prop_name} in ${var_idx}"),
+            v.iter()
+                .map(|e| Number::Int(*e))
+                .collect::<Vec<Number>>()
+                .into(),
+        ),
+        OpVal::Float64(OpValFloat64::In(v)) => (
+            f!("{prop_name} in ${var_idx}"),
+            v.iter()
+                .map(|e| Number::Float(*e))
+                .collect::<Vec<_>>()
+                .into(),
+        ),
 
         // contains
         OpVal::String(OpValString::Contains(v)) => {

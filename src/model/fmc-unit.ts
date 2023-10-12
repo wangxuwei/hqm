@@ -34,27 +34,27 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     return ipc_invoke(`restore_units`, {});
   }
 
-  async getPaymentInPeriod(start_date?: string, end_date?: string): Promise<PaymentInfo> {
-    return ipc_invoke(`get_payment_in_period`, { start_date, end_date }).then(res => {
+  async getPaymentInPeriod(unit_ids?: string[], start_date?: string, end_date?: string): Promise<PaymentInfo> {
+    return ipc_invoke(`get_payment_in_period`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
       return res.data as unknown as PaymentInfo;
     });
   }
 
-  async getValidLeftIncome(start_date?: string, end_date?: string): Promise<LeftIncomeInfo> {
-    return ipc_invoke(`get_valid_left_income`, { start_date, end_date }).then(res => {
+  async getValidLeftIncome(unit_ids?: string[], start_date?: string, end_date?: string): Promise<LeftIncomeInfo> {
+    return ipc_invoke(`get_valid_left_income`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
       return res.data as unknown as LeftIncomeInfo;
     });
   }
 
-  async getDueDateUnitsInPeroid(start_date?: string, end_date?: string): Promise<DueDateInfo> {
-    return ipc_invoke(`get_due_date_units_in_peroid`, { start_date, end_date }).then(res => {
+  async getDueDateUnitsInPeroid(unit_ids?: string[], start_date?: string, end_date?: string): Promise<DueDateInfo> {
+    return ipc_invoke(`get_due_date_units_in_peroid`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
       return res.data as unknown as DueDateInfo;
     });
   }
 
 
-  async getInterestInPeriod(start_date?: string, end_date?: string): Promise<InterestInfo> {
-    return ipc_invoke(`get_interest_in_period`, { start_date, end_date }).then(res => {
+  async getInterestInPeriod(unit_ids?: string[], start_date?: string, end_date?: string): Promise<InterestInfo> {
+    return ipc_invoke(`get_interest_in_period`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
       return res.data as unknown as InterestInfo;
     });
   }

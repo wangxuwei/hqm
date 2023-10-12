@@ -6,7 +6,6 @@ function ScrollTable(props:TableProps<any>, state:any){
   const [scrollY, setScrollY] = useState("")
   //页面加载完成后才能获取到对应的元素及其位置
   useEffect(() => {
-    console.log(123);
     setScrollY(getTableScroll())
   }, [])
 

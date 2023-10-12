@@ -14,7 +14,7 @@ export default function StatsDueDate() {
   const [items, setItems] = useState([] as DueDateSnapShot[]);
 
   function refresh() {
-    unitFmc.getDueDateUnitsInPeroid(toRFCString(startDate), toRFCString(endDate)).then((result) => {
+    unitFmc.getDueDateUnitsInPeroid(undefined, toRFCString(startDate), toRFCString(endDate)).then((result) => {
       setItems(result.unit_snapshots);
     });
   }

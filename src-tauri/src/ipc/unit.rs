@@ -7,22 +7,42 @@ use crate::ipc::service::{
     backup_units as do_backup_units, export_units as do_export_units,
     import_units as do_import_units, restore_units as do_restore_units,
 };
-use crate::model::{ModelMutateResultData, Unit, UnitBmc, UnitForCreate, UnitForUpdate};
+use crate::model::{
+    ModelMutateResultData, Unit, UnitBmc, UnitFilter, UnitForCreate, UnitForUpdate,
+};
 use crate::unit::unit_stats::{
     get_due_date_unit, get_interest, get_left_income, get_payment, DueDateInfo, InterestInfo,
     LeftIncomeInfo, PaymentInfo,
 };
 use crate::Error;
 use chrono::{DateTime, Local, NaiveDate};
+use modql::filter::OpValString;
 use serde::Deserialize;
 use serde_json::Value;
 use std::str::FromStr;
 use tauri::{command, AppHandle, Wry};
 
 #[derive(Deserialize)]
-pub struct DateParams {
+pub struct UnitParams {
+    unit_ids: Option<Vec<String>>,
     start_date: Option<String>,
     end_date: Option<String>,
+}
+
+impl UnitParams {
+    fn to_filter(&self) -> Option<UnitFilter> {
+        if self.unit_ids.is_some() && !self.unit_ids.as_ref().unwrap().is_empty() {
+            Some(UnitFilter {
+                id: self
+                    .unit_ids
+                    .as_ref()
+                    .map(|ids| OpValString::In(ids.to_vec()).into()),
+                name: None,
+            })
+        } else {
+            None
+        }
+    }
 }
 
 struct DateInfo {
@@ -30,8 +50,8 @@ struct DateInfo {
     end_date: Option<NaiveDate>,
 }
 
-impl From<DateParams> for DateInfo {
-    fn from(params: DateParams) -> Self {
+impl From<UnitParams> for DateInfo {
+    fn from(params: UnitParams) -> Self {
         let start_date = params.start_date.map(|s| {
             DateTime::<Local>::from_str(s.as_str())
                 .unwrap()
@@ -104,11 +124,12 @@ pub async fn list_units(app: AppHandle<Wry>, params: ListParams<Value>) -> IpcRe
 #[command]
 pub async fn get_payment_in_period(
     app: AppHandle<Wry>,
-    params: DateParams,
+    params: UnitParams,
 ) -> IpcResponse<PaymentInfo> {
     match Ctx::from_app(app) {
         Ok(ctx) => {
-            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let filter = params.to_filter();
+            let units = UnitBmc::list(ctx, filter).await.unwrap();
             let DateInfo {
                 start_date,
                 end_date,
@@ -123,11 +144,12 @@ pub async fn get_payment_in_period(
 #[command]
 pub async fn get_valid_left_income(
     app: AppHandle<Wry>,
-    params: DateParams,
+    params: UnitParams,
 ) -> IpcResponse<LeftIncomeInfo> {
     match Ctx::from_app(app) {
         Ok(ctx) => {
-            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let filter = params.to_filter();
+            let units = UnitBmc::list(ctx, filter).await.unwrap();
             let DateInfo {
                 start_date,
                 end_date,
@@ -142,11 +164,12 @@ pub async fn get_valid_left_income(
 #[command]
 pub async fn get_due_date_units_in_peroid(
     app: AppHandle<Wry>,
-    params: DateParams,
+    params: UnitParams,
 ) -> IpcResponse<DueDateInfo> {
     match Ctx::from_app(app) {
         Ok(ctx) => {
-            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let filter = params.to_filter();
+            let units = UnitBmc::list(ctx, filter).await.unwrap();
             let DateInfo {
                 start_date,
                 end_date,
@@ -161,11 +184,12 @@ pub async fn get_due_date_units_in_peroid(
 #[command]
 pub async fn get_interest_in_period(
     app: AppHandle<Wry>,
-    params: DateParams,
+    params: UnitParams,
 ) -> IpcResponse<InterestInfo> {
     match Ctx::from_app(app) {
         Ok(ctx) => {
-            let units = UnitBmc::list(ctx, None).await.unwrap();
+            let filter = params.to_filter();
+            let units = UnitBmc::list(ctx, filter).await.unwrap();
             let DateInfo {
                 start_date,
                 end_date,
