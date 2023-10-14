@@ -1,15 +1,15 @@
 import { useModal } from '@ebay/nice-modal-react';
+import { getName } from '@tauri-apps/api/app';
 import { open, save } from '@tauri-apps/api/dialog';
+import { isPermissionGranted, requestPermission, sendNotification } from '@tauri-apps/api/notification';
 import { WebviewWindow } from '@tauri-apps/api/window';
 import { Button, Space } from 'antd';
 import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
-import UnitDg from './UnitDg';
-
 import ScrollTable from '../comp/ScrollTable';
+import UnitDg from './UnitDg';
 import "./Units.pcss";
-
 
 
 function Units(){
@@ -57,7 +57,7 @@ function Units(){
   }
 
   async function onBackup(){
-    const result = await unitFmc.backupUnits();
+    const result = await doBackUp();
     if(!result.data){
       // FIXME: to a config file, and make to common valid
       const webview = new WebviewWindow('oauth_login', {
@@ -66,14 +66,28 @@ function Units(){
   
       webview.once("SEND_OAUTH_TOKEN", (data) => {
         webview.close();
-        unitFmc.backupUnits();
+        doBackUp();
       });
   
       await webview.listen('tauri://window-created', async function () {
         await webview.show();
       });
     }
-    
+  }
+
+  async function doBackUp(){
+    return unitFmc.backupUnits().then(async (r) => {
+      let permissionGranted = await isPermissionGranted();
+      if (!permissionGranted) {
+        const permission = await requestPermission();
+        permissionGranted = permission === 'granted';
+      }
+      if (permissionGranted) {
+        const appName = await getName();
+        sendNotification({ title: appName, body: '备份成功' });
+      }  
+      return r;
+    })
   }
 
   async function onRestore(){
