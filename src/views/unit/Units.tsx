@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Unit } from '../../bindings';
 import { unitFmc } from '../../model/fmc-unit';
 import ScrollTable from '../comp/ScrollTable';
+import UnitBudgetsDg from './UnitBudgetsDg';
 import UnitDg from './UnitDg';
 import "./Units.pcss";
 
@@ -23,6 +24,7 @@ function Units(){
   }
 
   const unitModal = useModal(UnitDg);
+  const unitBudgetsModal = useModal(UnitBudgetsDg);
 
   async function onAdd(){
     unitModal.show({  }).then(() => {
@@ -113,15 +115,20 @@ function Units(){
     }
   }
 
-  async function onEdit(id:string){
-    const unit = await unitFmc.get(id);
+  async function onEdit(unit:Unit){
     unitModal.show({ unit }).then(() => {
       refresh();
     });
   }
 
-  async function onDel(id:string){
-    await unitFmc.delete(id);
+  async function onMark(unit:Unit){
+    unitBudgetsModal.show({ unit }).then(() => {
+      refresh();
+    });
+  }
+
+  async function onDel(unit:Unit){
+    await unitFmc.delete(unit.id);
     refresh();
   }
 
@@ -145,10 +152,11 @@ function Units(){
     {
       title: '操作',
       key: 'action',
-      render: (_:any, rec:{id:string}) => (
+      render: (_:any, rec:Unit) => (
         <Space size="middle">
-          <Button size='small' type="primary" onClick={() => onEdit(rec.id)}>修改</Button>
-          <Button size='small' danger onClick={() => onDel(rec.id)}>删除</Button>
+          <Button size='small' type="primary" onClick={() => onEdit(rec)}>修改</Button>
+          <Button size='small' onClick={() => onMark(rec)}>标注</Button>
+          <Button size='small' danger onClick={() => onDel(rec)}>删除</Button>
         </Space>
       ),
     },

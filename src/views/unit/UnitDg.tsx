@@ -9,7 +9,7 @@ import { antdModal } from '../../ts/nice-modal-fix';
 import LunarDatePicker from '../comp/LunarDatePicker';
 import "./UnitDg.pcss";
 
-export default NiceModal.create(({ unit }: { unit?: Unit }) => {
+function UnitDg({ unit }: { unit?: Unit }) {
   const modal = useModal();
   const [form] = Form.useForm();
   const [plus, setPlus] = useState(unit?.plus_cycle! > 0);
@@ -19,7 +19,6 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
     form.validateFields().then(async () => {
       const newUnit = { ...form.getFieldsValue() };
 
-      console.log(newUnit)
       if(!data?.id){
         await unitFmc.create(newUnit);
       }else{
@@ -152,4 +151,6 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
       </Form>
     </Modal>
   );
-});
+}
+
+export default NiceModal.create(UnitDg);
