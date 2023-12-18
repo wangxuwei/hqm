@@ -19,6 +19,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
     form.validateFields().then(async () => {
       const newUnit = { ...form.getFieldsValue() };
 
+      console.log(newUnit)
       if(!data?.id){
         await unitFmc.create(newUnit);
       }else{
@@ -141,7 +142,7 @@ export default NiceModal.create(({ unit }: { unit?: Unit }) => {
           <InputNumber min={1} max={5} />
         </Form.Item>
 
-        <Form.Item name="amount" label="预估会金额">
+        <Form.Item name="amount" label="预估会金额" rules={[{ required: true }]}>
           <InputNumber />
         </Form.Item>
 
