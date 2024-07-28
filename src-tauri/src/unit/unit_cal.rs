@@ -1,13 +1,15 @@
-use std::cmp::Ordering;
-
+use super::utils_lunar::{leap_months, lunar2solar, solar2lunar, Lunar};
 use crate::model::{Unit, UnitBudget};
 use chrono::{DateTime, Datelike, Local, NaiveDate};
+use serde::{Deserialize, Serialize};
+use std::cmp::Ordering;
 use std::str::FromStr;
+use ts_rs::TS;
 
-use super::utils_lunar::{leap_months, lunar2solar, solar2lunar, Lunar};
-
-#[derive(Clone)]
+#[derive(Clone, TS, Serialize, Deserialize)]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct UnitTime {
+    #[ts(type = "string")]
     pub date: NaiveDate,
     pub num: u8,
     pub budget: Option<f32>,

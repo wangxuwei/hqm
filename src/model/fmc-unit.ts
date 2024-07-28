@@ -2,6 +2,7 @@ import { DueDateInfo } from '../bindings/DueDateInfo.js';
 import { InterestInfo } from '../bindings/InterestInfo.js';
 import { LeftIncomeInfo } from '../bindings/LeftIncomeInfo.js';
 import { PaymentInfo } from '../bindings/PaymentInfo.js';
+import { UnitTime } from '../bindings/UnitTime.js';
 import { Unit, UnitForCreate, UnitForUpdate } from '../bindings/index.js';
 import { ipc_invoke } from '../ts/ipc.js';
 import { BaseFmc } from './fmc-base.js';
@@ -59,6 +60,11 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     });
   }
 
+  async getUnitTimeline(unit_id: string): Promise<UnitTime[]> {
+    return ipc_invoke(`get_unit_timeline`, { id: unit_id }).then(res => {
+      return res.data as unknown as UnitTime[];
+    });
+  }
 }
 
 export const unitFmc = new UnitFmc();

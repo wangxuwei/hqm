@@ -10,6 +10,7 @@ use crate::ipc::service::{
 use crate::model::{
     ModelMutateResultData, Unit, UnitBmc, UnitFilter, UnitForCreate, UnitForUpdate,
 };
+use crate::unit::unit_cal::{get_unit_times, UnitTime};
 use crate::unit::unit_stats::{
     get_due_date_unit, get_interest, get_left_income, get_payment, DueDateInfo, InterestInfo,
     LeftIncomeInfo, PaymentInfo,
@@ -22,7 +23,7 @@ use serde_json::Value;
 use std::str::FromStr;
 use tauri::{command, AppHandle, Wry};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Debug)]
 pub struct UnitParams {
     unit_ids: Option<Vec<String>>,
     start_date: Option<String>,
@@ -73,6 +74,20 @@ impl From<UnitParams> for DateInfo {
 pub async fn get_unit(app: AppHandle<Wry>, params: GetParams) -> IpcResponse<Unit> {
     match Ctx::from_app(app) {
         Ok(ctx) => UnitBmc::get(ctx, &params.id).await.into(),
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
+pub async fn get_unit_timeline(
+    app: AppHandle<Wry>,
+    params: GetParams,
+) -> IpcResponse<Vec<UnitTime>> {
+    match Ctx::from_app(app) {
+        Ok(ctx) => UnitBmc::get(ctx, &params.id)
+            .await
+            .map(|f| get_unit_times(&f, None, None))
+            .into(),
         Err(_) => Err(Error::CtxFail).into(),
     }
 }

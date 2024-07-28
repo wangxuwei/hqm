@@ -11,7 +11,7 @@ pub use error::{Error, Result};
 // -- Imports
 use crate::server::start_server;
 use model::ModelStore;
-use std::{env, sync::Arc, thread};
+use std::{sync::Arc, thread};
 
 // -- Sub-Modules
 mod ctx;
@@ -60,6 +60,7 @@ async fn main() -> Result<()> {
             ipc::get_valid_left_income,
             ipc::get_due_date_units_in_peroid,
             ipc::get_interest_in_period,
+            ipc::get_unit_timeline,
             // UnitBudget
             ipc::get_unit_budget,
             ipc::create_unit_budget,

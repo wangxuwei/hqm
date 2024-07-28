@@ -10,6 +10,7 @@ import { unitFmc } from '../../model/fmc-unit';
 import ScrollTable from '../comp/ScrollTable';
 import UnitBudgetsDg from './UnitBudgetsDg';
 import UnitDg from './UnitDg';
+import UnitTimelineDg from './UnitTimelineDg';
 import "./Units.pcss";
 
 
@@ -25,6 +26,7 @@ function Units(){
 
   const unitModal = useModal(UnitDg);
   const unitBudgetsModal = useModal(UnitBudgetsDg);
+  const unitTimelineModal = useModal(UnitTimelineDg);
 
   async function onAdd(){
     unitModal.show({  }).then(() => {
@@ -132,6 +134,10 @@ function Units(){
     refresh();
   }
 
+  async function onTimeline(unit:Unit){
+    unitTimelineModal.show({ unit });
+  }
+
   useEffect(() => {
     refresh();
   }, [setItems]);
@@ -156,6 +162,7 @@ function Units(){
         <Space size="middle">
           <Button size='small' type="primary" onClick={() => onEdit(rec)}>修改</Button>
           <Button size='small' onClick={() => onMark(rec)}>标注</Button>
+          <Button size='small' onClick={() => onTimeline(rec)}>时间线</Button>
           <Button size='small' danger onClick={() => onDel(rec)}>删除</Button>
         </Space>
       ),
