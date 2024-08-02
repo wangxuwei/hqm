@@ -81,12 +81,13 @@ export default function StatsPayment(){
 
   return (
     <div className="StatsPayment">
-      <Form className="screen-filter" initialValues={{
+      <Form className="screen-filter"
+       initialValues={{
         startDate,
         endDate
       }}>
-      <Form.Item className="filter-item">
-        <Select
+        <Form.Item className="filter-item">
+          <Select
             mode="multiple"
             placeholder="所有互助会"
             options={units}
