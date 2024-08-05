@@ -61,7 +61,11 @@ impl From<String> for ModelMutateResultData {
 // region:    --- Tests
 #[cfg(test)]
 mod tests {
-    use modql::filter::{FilterNodes, OpValString, OpValsString};
+    use crate::model::{ModelStore, UnitFilter};
+    use modql::{
+        filter::{FilterNodes, IntoFilterNodes, OpValString, OpValsString},
+        ListOptions,
+    };
 
     #[derive(Debug, FilterNodes)]
     struct ProjectFilter {
@@ -74,6 +78,25 @@ mod tests {
             id: Some(OpValString::Eq("hello".to_string()).into()),
         };
         println!("{pf:?}");
+        Ok(())
+    }
+
+    #[tokio::test]
+    async fn test_fileter() -> anyhow::Result<()> {
+        let filter = UnitFilter {
+            id: Some(OpValString::Eq("unit:3ui1vlqxap8rz4l93rme".to_string()).into()),
+            name: None,
+        };
+        let store = ModelStore::new().await?;
+        let objects = store
+            .store()
+            .exec_select(
+                "unit",
+                Some(filter.filter_nodes(None)),
+                ListOptions::default(),
+            )
+            .await?;
+        println!("{:?}", objects);
         Ok(())
     }
 }

@@ -15,7 +15,7 @@ use crate::{Error, Result};
 use modql::filter::{FilterGroups, OpVal, OpValBool, OpValFloat64, OpValInt64, OpValString};
 use modql::ListOptions;
 use std::collections::BTreeMap;
-use surrealdb::sql::{Number, Value};
+use surrealdb::sql::{Number, Thing, Value};
 
 pub(super) fn build_select_query(
     tb: &str,
@@ -89,7 +89,17 @@ pub(super) fn build_select_query(
 fn sqlize(opval: OpVal, prop_name: &str, var_idx: &str) -> Result<(String, Value)> {
     Ok(match opval {
         // Eq
-        OpVal::String(OpValString::Eq(v)) => (f!("{prop_name} = ${var_idx}"), v.into()),
+        OpVal::String(OpValString::Eq(v)) => {
+            if prop_name == "id" {
+                let vars = v.split(':').collect::<Vec<&str>>();
+                (
+                    f!("{prop_name} = ${var_idx}"),
+                    Thing::from((vars[0], vars[1])).into(),
+                )
+            } else {
+                (f!("{prop_name} = ${var_idx}"), v.into())
+            }
+        }
         OpVal::Int64(OpValInt64::Eq(v)) => (f!("{prop_name} = ${var_idx}"), v.into()),
         OpVal::Float64(OpValFloat64::Eq(v)) => (f!("{prop_name} = ${var_idx}"), v.into()),
         OpVal::Bool(OpValBool::Eq(v)) => (f!("{prop_name} = ${var_idx}"), v.into()),
@@ -116,7 +126,22 @@ fn sqlize(opval: OpVal, prop_name: &str, var_idx: &str) -> Result<(String, Value
         OpVal::Float64(OpValFloat64::Gte(v)) => (f!("{prop_name} > ${var_idx}"), v.into()),
 
         // in
-        OpVal::String(OpValString::In(v)) => (f!("{prop_name} in ${var_idx}"), v.into()),
+        OpVal::String(OpValString::In(v)) => {
+            if prop_name == "id" {
+                (
+                    f!("{prop_name} in ${var_idx}"),
+                    v.iter()
+                        .map(|f| {
+                            let vars = f.split(':').collect::<Vec<&str>>();
+                            Value::Thing(Thing::from((vars[0], vars[1])))
+                        })
+                        .collect::<Vec<Value>>()
+                        .into(),
+                )
+            } else {
+                (f!("{prop_name} in ${var_idx}"), v.into())
+            }
+        }
         OpVal::Int64(OpValInt64::In(v)) => (
             f!("{prop_name} in ${var_idx}"),
             v.iter()
