@@ -179,10 +179,7 @@ pub fn get_all_dates(unit: &Unit) -> Vec<NaiveDate> {
 }
 
 pub fn get_all_budgets(unit: &Unit) -> Vec<Option<f32>> {
-    let mark_budgets = match unit.clone().unit_budgets {
-        Some(s) => s,
-        None => Vec::new(),
-    };
+    let mark_budgets = unit.clone().unit_budgets.unwrap_or_default();
     let count = unit.count as usize;
     let mut budgets: Vec<Option<f32>> = Vec::with_capacity(unit.count as usize);
 
