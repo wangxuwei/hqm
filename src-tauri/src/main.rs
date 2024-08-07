@@ -61,6 +61,7 @@ async fn main() -> Result<()> {
             ipc::get_due_date_units_in_peroid,
             ipc::get_interest_in_period,
             ipc::get_unit_timeline,
+            ipc::list_valid_time_units,
             // UnitBudget
             ipc::get_unit_budget,
             ipc::create_unit_budget,

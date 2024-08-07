@@ -317,3 +317,31 @@ pub fn get_interest(
         unit_snapshots,
     }
 }
+
+pub fn get_valid_time_units(
+    units: Vec<Unit>,
+    start_date: Option<NaiveDate>,
+    end_date: Option<NaiveDate>,
+) -> Vec<Unit> {
+    let mut new_units = vec![];
+    for unit in units {
+        let unit_times = get_unit_times(&unit, None, None);
+        if unit_times.is_empty() {
+            continue;
+        }
+        let last_budget_date = unit_times[unit_times.len() - 1].date;
+        if let Some(sdate) = start_date {
+            if sdate > last_budget_date {
+                continue;
+            }
+        }
+
+        if let Some(edate) = end_date {
+            if edate < last_budget_date {
+                continue;
+            }
+        }
+        new_units.push(unit);
+    }
+    new_units
+}

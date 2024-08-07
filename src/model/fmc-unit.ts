@@ -53,10 +53,15 @@ class UnitFmc extends BaseFmc<Unit, UnitForCreate, UnitForUpdate> {
     });
   }
 
-
   async getInterestInPeriod(unit_ids?: string[], start_date?: string, end_date?: string): Promise<InterestInfo> {
     return ipc_invoke(`get_interest_in_period`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
       return res.data as unknown as InterestInfo;
+    });
+  }
+
+  async getValidTimeUnits(unit_ids?: string[], start_date?: string, end_date?: string): Promise<Unit[]> {
+    return ipc_invoke(`list_valid_time_units`, { unit_ids: unit_ids, start_date, end_date }).then(res => {
+      return res.data as unknown as Unit[];
     });
   }
 

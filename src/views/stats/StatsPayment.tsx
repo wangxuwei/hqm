@@ -31,7 +31,7 @@ export default function StatsPayment(){
 
   useEffect(() => {
     refresh();
-    unitFmc.listUnits().then((result) => {
+    unitFmc.getValidTimeUnits(undefined, now().toISOString()).then((result) => {
       setUnits((result ?? []).map((u) => {
         return {value: u.id, label: u.name};
       }));

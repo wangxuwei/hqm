@@ -12,8 +12,8 @@ use crate::model::{
 };
 use crate::unit::unit_cal::{get_unit_times, UnitTime};
 use crate::unit::unit_stats::{
-    get_due_date_unit, get_interest, get_left_income, get_payment, DueDateInfo, InterestInfo,
-    LeftIncomeInfo, PaymentInfo,
+    get_due_date_unit, get_interest, get_left_income, get_payment, get_valid_time_units,
+    DueDateInfo, InterestInfo, LeftIncomeInfo, PaymentInfo,
 };
 use crate::Error;
 use chrono::{DateTime, Local, NaiveDate};
@@ -210,6 +210,26 @@ pub async fn get_interest_in_period(
                 end_date,
             } = params.into();
             let ret = get_interest(&units, start_date, end_date);
+            Ok(ret).into()
+        }
+        Err(_) => Err(Error::CtxFail).into(),
+    }
+}
+
+#[command]
+pub async fn list_valid_time_units(
+    app: AppHandle<Wry>,
+    params: UnitParams,
+) -> IpcResponse<Vec<Unit>> {
+    match Ctx::from_app(app) {
+        Ok(ctx) => {
+            let filter = params.to_filter();
+            let units = UnitBmc::list(ctx, filter).await.unwrap();
+            let DateInfo {
+                start_date,
+                end_date,
+            } = params.into();
+            let ret = get_valid_time_units(units, start_date, end_date);
             Ok(ret).into()
         }
         Err(_) => Err(Error::CtxFail).into(),
